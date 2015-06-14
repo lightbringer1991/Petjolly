@@ -1,0 +1,173 @@
+BODY{margin:0px auto;
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+}
+
+.main-area{width:100%;
+margin:0px auto;
+background:url(../images/top-bg.png) repeat-x!important;
+
+}
+
+.top-section{width:90%;
+height:167px;
+margin:0px auto;
+margin-bottom:20px;
+}
+
+.top-logo{width:200px;
+height:60px;
+float:left;
+margin-left:20px;
+margin-top:20px;
+font-size:40px;
+color:#ffffff;
+}
+
+.top-right{background-image:url(../images/top-right2.png);
+background-repeat:no-repeat;
+width:436px;
+float:right;
+height:65px;
+background-position:bottom;
+margin-top:20px;
+}
+
+.top-menu{width:900px;
+float:right;
+height:39px;
+margin-top:-1%;
+margin-left:20px;
+clear:both;
+}
+
+ul#topnav {
+	margin: 0;
+	padding: 0;
+	float: right;
+	
+	list-style: none;
+	position: relative;
+	font-size: 1.2em;
+	margin-top:12px;
+}
+ul#topnav li {
+	float: left;
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	background-image:url(../images/menu-bg.png)!important;
+	background-repeat: repeat-x!important;
+height:36px;
+	font-size:12px;
+	font-weight:normal;
+}
+ul#topnav li a {
+	padding: 7px 15px;
+	display: block;
+	color: #fff;
+	text-decoration: none;
+	background-image:url(../images/menu-brk.png);
+	background-repeat:no-repeat;
+	height:36px;
+	line-height:20px;
+}
+ul#topnav li:hover, ul#topnav li.active {
+	background-image: url(../images/hover.png)!important;
+	background-repeat: repeat-x!important;
+	color:#666666 !important;
+}
+
+ul#topnav li a:hover, ul#topnav li.active a{color:#666666 !important;
+}
+ul#topnav li span, ul#topnav li.active span {
+	float: left;
+	padding: 5px 0;
+	position: absolute;
+	left: 0;	
+	top: 30px;
+	display: none;
+	width:600px;
+	height:50px;
+	color: #6d6f71 !important;
+	font-size:12px;
+	font-weight:normal;
+	padding-top:15px;
+}
+ul#topnav li:hover span,ul#topnav li.active span {
+	display: block;
+}
+ul#topnav li span a,ul#topnav li.active span a{
+	display: inline;
+	background-image:none !important;
+	color:#333333 !important;
+}
+ul#topnav li span a:hover,ul#topnav li span a.active {
+	text-decoration: underline;
+}
+ul#topnav li a < ul#topnav li span a:hover{color:#666666 !important;}
+
+.right-text{width:210px;
+float:left;
+font-size:12px;
+color:#FFFFFF;
+margin-left:50px;
+line-height:30px;
+}
+
+
+.menu-right{width:172px;
+float:left;
+height:36px;
+background-image:url(../images/menu-bg.png);
+background-repeat:repeat-x;
+}
+.menu-right ul{padding:0px;
+margin:0px;
+list-style:none;
+width:100%;
+float:left;
+margin-top:3px;
+}
+
+.menu-right ul li{float:left;
+padding:7px 11px;
+font-size:13px;
+color:#FFFFFF;
+background-image:url(../images/menu-brk.png);
+background-repeat:no-repeat;
+background-position:right;
+font-weight:bold;
+
+}
+.menu-right ul li:last-child{background-image:none;
+}
+
+.menu-right ul li a{float:left;
+font-size:13px;
+color:#FFFFFF;
+text-decoration:none;
+font-weight:bold;
+display:block;
+}
+
+.menu-right ul li a:hover{float:left;
+font-size:13px;
+color:#666666;
+text-decoration:none;
+display:block;
+}
+
+.menu-right ul li:hover{background-image:url(../images/hover.png);
+background-repeat:repeat-x;
+display:block;
+color:#666666;text-decoration:none;
+}
+
+
+INPUT.mgrid_button, INPUT.mgrid_button:hover, INPUT.mgrid_button:focus{
+background-color: #CD5F16;
+border:1px solid #CD5F16;
+}
+INPUT.mgrid_text{border:1px solid #CD5F16;}
+

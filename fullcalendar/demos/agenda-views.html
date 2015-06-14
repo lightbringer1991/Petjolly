@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='../fullcalendar/fullcalendar.css' rel='stylesheet' />
+<link href='../fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../jquery/jquery-1.9.1.min.js'></script>
+<script src='../jquery/jquery-ui-1.10.2.custom.min.js'></script>
+<script src='../fullcalendar/fullcalendar.min.js'></script>
+<script>
+
+	$(document).ready(function() {
+	
+		var date = new Date();
+		var d = date.getDate();
+		var m = date.getMonth();
+		var y = date.getFullYear();
+		
+		$.ajax({
+            type: "GET",
+            async: true,
+            url: "http://www.vitalscloud.com/alpha/webservice/cal_event.php?id=9",
+            data: "",
+            success: function(msg){
+                //alert('msg---'+msg);
+
+			$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			editable: true,
+			events: JSON.parse(msg),
+			 eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+	
+					alert(
+						event.title + " was moved " +
+						dayDelta + " days and " +
+						minuteDelta + " minutes."
+					);
+			
+					if (allDay) {
+						alert("Event is now all-day");
+					}else{
+						alert("Event has a time-of-day");
+					}
+			
+					if (!confirm("Are you sure about this change?")) {
+						revertFunc();
+					}
+	
+			},
+			eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
+
+				alert(
+					"The end date of " + event.title + "has been moved " +
+					dayDelta + " days and " +
+					minuteDelta + " minutes."
+				);
+		
+				if (!confirm("is this okay?")) {
+					revertFunc();
+				}
+
+    		}
+		});
+
+            }
+        });
+		
+	});
+
+</script>
+<style>
+
+	body {
+		margin-top: 40px;
+		text-align: center;
+		font-size: 14px;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+
+	#calendar {
+		width: 900px;
+		margin: 0 auto;
+		}
+
+</style>
+</head>
+<body>
+<div id='calendar'></div>
+</body>
+</html>

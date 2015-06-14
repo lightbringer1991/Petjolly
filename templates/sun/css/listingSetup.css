@@ -1,0 +1,114 @@
+	input{-webkit-border-radius:5px; border-radius:5px; border:1px solid #cccccc; width:100%; padding:1%; margin:10px 0px; color:#000; font-size:12px;}
+	legend{font-weight:bold;}
+	legend span{color:red;}
+	#checkbox{float:left; width:auto; margin:5px;}
+	.radiobtn{float:left; width:auto; margin:5px;}
+	#selectmenu{width:150px; padding:2px;}
+	p{font-size:12px; margin:5px;}
+	textarea{-webkit-border-radius:5px; border-radius:5px; border:1px solid #cccccc; width:98%; padding:1%; margin:10px 0px; color:#000; font-size:12px;}
+	.main{ width:95%; padding:5%;}
+	.title{float:left; width:100%; font-size:22px; padding:10px 0px; border-bottom:1px dotted #444444; font-family:Arial, Helvetica, sans-serif; font-weight:bold; color:#444444;}
+	
+	.row{float:left; width:100%; margin:0px 0px;}
+	.row img{float:left; margin:5px;}
+	
+	.map{float:left; width:100%; height:300px;}
+	.map iframe{width:100%; height:300px; border:0px;}
+	
+	.contact img{float:left; margin:9px;}
+	.Pricing p{float:left;}
+	
+	.opening-hours input{width:100px; margin:10px 0px 2px 0px;}
+	.opening-hours p{float:none; margin:0px;}
+	
+	.photos table td{border-bottom:1px solid #CCC;}
+	.row.buttons { text-align: right;}
+	.steps legend{ margin-bottom:0}
+	.pac-container{z-index:100001;}
+	.business_hours{float:left; height:auto; margin-bottom:10px;}
+	.steps_title li {float: left;margin-right: 2px;list-style: none; color:#E02222;}
+	.input_fields_wrap{height:auto; float:left; margin-top:10px;}
+	#inline1{width:75%; margin:auto;}
+	.add_new_business_hrs{margin:5px 0px;}
+	.add_new_hrs{margin:10px 0px;}
+	.sceditor-container ltr{width:100% !important; -webkit-border-radius:5px; border-radius:5px; border:1px solid #cccccc;}
+	
+	/* *********** Upload data************/
+	.upload-statusbar {border: 1px solid #0ba1b5;Margin-top: 10px;width: 420px;margin-right: 10px; -moz-border-radius: 4px;-webkit-border-radius: 4px;border-radius: 4px;
+	padding: 5px 5px 5px 5px}
+	.upload-filename {width: 100%;height: auto;	margin: 0 5px 5px 10px;	color: #807579	}
+	.upload-progress {margin: 0 10px 5px 10px;	position: relative;	width: 250px;	border: 1px solid #ddd;	padding: 1px;	border-radius: 3px;	display: inline-block	}
+	.upload-bar {background-color: #0ba1b5;	width: 0;	height: 20px;	border-radius: 3px;	color:#FFFFFF;	}
+	.upload-percent {	position: absolute;	display: inline-block;	top: 3px;	left: 48%	}
+	.upload-red {-moz-box-shadow: inset 0 39px 0 -24px #e67a73;	-webkit-box-shadow: inset 0 39px 0 -24px #e67a73;	box-shadow: inset 0 39px 0 -24px #e67a73;	background-color: #e4685d;	-moz-border-radius: 4px;	-webkit-border-radius: 4px;	border-radius: 4px;	display: inline-block;	color: #fff;	font-family: arial;	font-size: 13px;
+	font-weight: normal;	padding: 4px 15px;	text-decoration: none;	text-shadow: 0 1px 0 #b23e35;	cursor: pointer;	vertical-align: top;	margin-right:5px;	}
+	.upload-green {	background-color: #77b55a;	-moz-border-radius: 4px;	-webkit-border-radius: 4px;	border-radius: 4px;	margin: 0;	padding: 0;	display: inline-block;	color: #fff;	font-family: arial;	font-size: 13px;	font-weight: normal;	padding: 4px 15px;	text-decoration: none;	cursor: pointer;	text-shadow: 0 1px 0 #5b8a3c;	vertical-align: top;	margin-right:5px;	}
+	.upload {font-family: Arial, Helvetica, sans-serif;	font-size: 16px;  font-weight: bold;padding: 15px 20px;cursor:pointer;line-height:20px;	height:25px;margin:0 10px 10px 0;
+	  display: inline-block;  background: #fff; border: 1px solid #e8e8e8; color: #888; text-decoration: none; border-radius: 3px; -webkit-border-radius: 3px; -moz-border-radius: 3px;  -moz-box-shadow: 0 2px 0 0 #e8e8e8; -webkit-box-shadow: 0 2px 0 0 #e8e8e8; box-shadow: 0 2px 0 0 #e8e8e8; padding: 6px 10px 4px 10px;  color: #fff; background: #2f8ab9; border: none; -moz-box-shadow: 0 2px 0 0 #13648d; -webkit-box-shadow: 0 2px 0 0 #13648d; box-shadow: 0 2px 0 0 #13648d;  vertical-align:middle;   }
+	.upload:hover {  background: #28759D; -moz-box-shadow: 0 2px 0 0 #15719f; -webkit-box-shadow: 0 2px 0 0 #15719f; box-shadow: 0 2px 0 0 #15719f;	}
+	.ajax-upload-dragdrop{border:1px solid #b0b0b0;	width:420px;color: #DADCE3;text-align:left;vertical-align:middle;padding:8px 10px 0px 8px;}
+	.button-next {float:right;}
+	
+/*	 .smpl-step { margin-top: 40px; }*/
+	.smpl-step .col-xs-3{width:25%;}
+    .smpl-step {border-bottom: solid 1px #e0e0e0; padding: 0 42px 10px 0;  }
+    .smpl-step > .smpl-step-step { padding: 0; position: relative;}   
+    .smpl-step > .smpl-step-step .smpl-step-num {font-size: 17px; margin-top: -20px; margin-left: 47px;    }
+    .smpl-step > .smpl-step-step .smpl-step-info {font-size: 14px; padding-top: 27px; padding-left:37px;}
+
+    .smpl-step > .smpl-step-step > .smpl-step-icon {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        display: block;
+        background: #5CB85C;
+        top: 45px;
+        left: 50%;
+        margin-top: -35px;
+        margin-left: -15px;
+        border-radius: 50% !important;
+    }
+
+    .smpl-step > .smpl-step-step > .progress {
+        position: relative;
+        border-radius: 0px;
+        height: 8px;
+        box-shadow: none;
+        margin-top: 37px;
+    }
+
+   .smpl-step > .smpl-step-step > .progress > .progress-bar {
+       width: 0px;
+       box-shadow: none;
+       background: #428BCA;
+   }
+
+    .smpl-step > .smpl-step-step.complete > .progress > .progress-bar {
+        width: 100%;
+    }
+
+    .smpl-step > .smpl-step-step.active > .progress > .progress-bar {
+        width: 50%;
+    }
+
+    .smpl-step > .smpl-step-step:first-child.active > .progress > .progress-bar {
+        width: 0%;
+    }
+
+    .smpl-step > .smpl-step-step:last-child.active > .progress > .progress-bar {
+        width: 100%;
+    }
+
+    .smpl-step > .smpl-step-step.disabled > .smpl-step-icon {
+        background-color: #f5f5f5;
+    }
+
+    .smpl-step > .smpl-step-step.disabled > .smpl-step-icon:after { opacity: 0;  }
+
+    .smpl-step > .smpl-step-step:first-child > .progress { left: 50%;   width: 50%;    }
+
+    .smpl-step > .smpl-step-step:last-child > .progress { width: 50%;  }
+    .smpl-step > .smpl-step-step.disabled a.smpl-step-icon { pointer-events: none; }
+	.final_steps{padding: 35px;margin-top: 51px;border: 1px solid grey; text-align: center;}
+	
+	.button_finish {border: 1px solid #428BCA;width: 88px;height: 31px;display: block;float: right;text-align: center;line-height: 2;background-color: #428BCA;color:white !important;font-weight: bold;margin-top: 10px;text-decoration: none !important;}

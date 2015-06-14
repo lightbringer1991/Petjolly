@@ -1,0 +1,11 @@
+Please check access permissions to
+
+    images/upload/
+    images/flags/
+    images/banners/
+    images/gallery/
+    images/doctors/
+    tmp/backup/
+    tmp/cache/
+    tmp/export/
+    feeds/

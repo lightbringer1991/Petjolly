@@ -1,0 +1,124 @@
+[10-Oct-2014 00:04:30 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:07:04 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:08:20 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:09:15 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:09:49 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:09:53 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:10:59 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:13:24 America/Chicago] PHP Fatal error:  Uncaught exception 'PDOException' with message 'SQLSTATE[HY000] [2005] Unknown MySQL server host 'DB_HOST' (0)' in /home3/srinione/public_html/sun/pets/application/DB_Connect.php:22
+Stack trace:
+#0 /home3/srinione/public_html/sun/pets/application/DB_Connect.php(22): PDO->__construct('mysql:host=DB_H...', 'DB_USER', 'DB_PASSWORD')
+#1 /home3/srinione/public_html/sun/pets/controllers/ControllerAuthentication.php(14): DB_Connect->connect()
+#2 /home3/srinione/public_html/sun/pets/index.php(6): ControllerAuthentication->__construct()
+#3 {main}
+  thrown in /home3/srinione/public_html/sun/pets/application/DB_Connect.php on line 22
+[10-Oct-2014 00:17:34 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:17:34 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:17:34 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:17:34 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:17:56 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:17:56 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:17:56 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:17:56 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:18:44 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:18:44 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:18:44 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:18:44 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:19:25 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:19:25 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:19:25 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:19:25 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:26:15 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:26:15 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:26:15 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:26:15 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:26:37 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:26:37 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[10-Oct-2014 00:26:37 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[10-Oct-2014 00:26:37 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 10:35:22 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 10:35:22 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 10:35:22 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 10:35:22 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 22:10:37 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 22:10:37 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 22:10:37 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 22:10:37 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 22:12:54 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 22:12:54 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[11-Oct-2014 22:12:54 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[11-Oct-2014 22:12:54 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 00:56:27 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 00:56:27 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 00:56:27 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 00:56:27 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:00:22 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:00:22 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:00:22 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:00:22 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:01:31 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:01:31 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:01:31 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:01:31 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:05:38 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:05:38 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 01:05:38 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 01:05:38 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 05:37:43 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 05:37:43 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 05:37:43 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 05:37:43 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 22:38:11 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 22:38:11 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[12-Oct-2014 22:38:11 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[12-Oct-2014 22:38:11 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[13-Oct-2014 08:59:21 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[13-Oct-2014 08:59:21 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[13-Oct-2014 08:59:21 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[13-Oct-2014 08:59:21 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[14-Oct-2014 05:09:14 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[14-Oct-2014 05:09:14 America/Chicago] PHP Notice:  Use of undefined constant JSON_FILE - assumed 'JSON_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 141
+[14-Oct-2014 05:09:14 America/Chicago] PHP Notice:  Use of undefined constant ROOT_URL - assumed 'ROOT_URL' in /home3/srinione/public_html/sun/pets/home.php on line 150
+[14-Oct-2014 05:09:14 America/Chicago] PHP Notice:  Use of undefined constant XML_FILE - assumed 'XML_FILE' in /home3/srinione/public_html/sun/pets/home.php on line 150
