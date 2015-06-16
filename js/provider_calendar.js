@@ -405,7 +405,7 @@ function createCalendar(elementList, calendarOptions) {
         });
     });
 
-    // autocomplete
+    // autocomplete customer details
     $(elementOps.modalCreateSelector).find("input[name='customer_name']").autocomplete({
         source: elementOps.ajaxCustomerAutocomplete,
         appendTo: elementOps.modalCreateSelector,

@@ -191,16 +191,16 @@ switch ($option) {
         break;
     case "customerAutocomplete":
         $term = isset($_REQUEST['term']) ? mysqli_real_escape_string($database_connection, $_REQUEST['term']) : '';
-        $sql = "SELECT `id`, `fullName`
-            FROM (
-                SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`
-                FROM `meda_patients`, `providers_customers`
-                WHERE `id`=`customer_id` AND `provider_id`=$doc_id
-            ) AS `name`
-            WHERE `fullName` LIKE '%$term%'";
-        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
         $output = array();
-//        echo var_dump($results);
+
+        // search by customer name
+        $sql = "SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName` 
+                FROM `meda_patients` 
+                LEFT JOIN `providers_customers` ON `id`=`customer_id`
+                WHERE `provider_id`=$doc_id 
+                    AND CONCAT(`first_name`, ' ', `last_name`) LIKE '%$term%'";
+
+        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
         foreach ($results[0] as $r) {
             $record = array(
                 'id' => '',
@@ -209,6 +209,34 @@ switch ($option) {
             );
             array_push($output, $record);
         }
+
+        // search by phone number
+        $sql = "SELECT `id`, `phone`
+                FROM `meda_patients` 
+                LEFT JOIN `providers_customers` ON `id`=`customer_id`
+                WHERE `provider_id`=$doc_id 
+                    AND `phone` LIKE '%$term%'";
+        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
+        foreach ($results[0] as $r) {
+            $record = array(
+                'id' => '',
+                'label' => $r['phone'],
+                'value' => $r['id']
+            );
+            array_push($output, $record);
+        }
+
+        // search pet name
+        $petList = Pets::getAllPetsBySimilarCondition('name', $term);
+        foreach ($petList as $p) {
+            $record = array(
+                'id' => '',
+                'label' => $p -> getName(),
+                'value' => $p -> getCustomerId()
+            );
+            array_push($output, $record);
+        }
+
         echo json_encode($output);
         break;
     case "createCustomer":

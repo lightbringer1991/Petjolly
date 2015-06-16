@@ -454,7 +454,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 								</tr>
 								<tr>
 									<td width="25%" align="left">
-										<label for="color">Duration <span class="required">*</span>:</label>
+										<label for="color">Color <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
 										<input type="text" class="form-control input-sm" name="color" data-role="spectrum" />
