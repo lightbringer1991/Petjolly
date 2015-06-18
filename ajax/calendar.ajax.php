@@ -191,49 +191,77 @@ switch ($option) {
         break;
     case "customerAutocomplete":
         $term = isset($_REQUEST['term']) ? mysqli_real_escape_string($database_connection, $_REQUEST['term']) : '';
-        $output = array();
+        /*
+            $customerList = array(
+                '<customer_id>' => array(
+                    'fullName' => '<string>',
+                    'phone' => '<string>',
+                    'pet' => '<string>'
+                )
+            )
+        */
+        $customerList = array();
 
-        // search by customer name
-        $sql = "SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName` 
+        // search by customer name or phone number
+        $sql = "SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`, `phone`
                 FROM `meda_patients` 
                 LEFT JOIN `providers_customers` ON `id`=`customer_id`
                 WHERE `provider_id`=$doc_id 
-                    AND CONCAT(`first_name`, ' ', `last_name`) LIKE '%$term%'";
+                    AND ((CONCAT(`first_name`, ' ', `last_name`) LIKE '%$term%') OR (`phone` LIKE '%$term%'))";
 
         $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
         foreach ($results[0] as $r) {
-            $record = array(
-                'id' => '',
-                'label' => $r['fullName'],
-                'value' => $r['id']
+            $customerList[$r['id']] = array(
+                'fullName' => $r['fullName'],
+                'phone' => $r['phone'],
+                'pet' => ''
             );
-            array_push($output, $record);
         }
-
-        // search by phone number
-        $sql = "SELECT `id`, `phone`
-                FROM `meda_patients` 
-                LEFT JOIN `providers_customers` ON `id`=`customer_id`
-                WHERE `provider_id`=$doc_id 
-                    AND `phone` LIKE '%$term%'";
-        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
-        foreach ($results[0] as $r) {
-            $record = array(
-                'id' => '',
-                'label' => $r['phone'],
-                'value' => $r['id']
-            );
-            array_push($output, $record);
-        }
-
         // search pet name
-        $petList = Pets::getAllPetsBySimilarCondition('name', $term);
-        foreach ($petList as $p) {
+        $sql = "SELECT `pa`.`id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`, `pe`.`name`
+                    FROM `meda_patients` AS `pa`
+                    LEFT JOIN `providers_customers` AS `pc` ON `pa`.`id`=`pc`.`customer_id`
+                    LEFT JOIN `meda_pets` AS `pe` ON `pc`.`customer_id`=`pe`.`customer_id`
+                    WHERE `pc`.`provider_id`=$doc_id
+                    AND `pe`.name LIKE '%$term%'";
+        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
+
+        // concatenate pet names with the same owner
+        foreach ($results[0] as $r) {
+            if (isset($customerList[$r['id']])) {
+                if ($customerList[$r['id']]['pet'] != '') {
+                    $customerList[$r['id']]['pet'] .= ", {$r['name']}";
+                } else {
+                    $customerList[$r['id']]['pet'] .= $r['name'];
+                }
+            } else {
+                $customerList[$r['id']] = array(
+                    'fullName' => $r['fullName'],
+                    'phone' => '',
+                    'pet' => $r['name']
+                );
+            }
+        }
+
+        // format the output
+        $output = array();
+        foreach ($customerList as $k => $v) {
             $record = array(
                 'id' => '',
-                'label' => $p -> getName(),
-                'value' => $p -> getCustomerId()
+                'label' => $v['fullName'],
+                'description' => '',
+                'value' => $k
             );
+            if ($v['phone'] != '') { $record['description'] = "Phone: " . $v['phone']; }
+            if ($v['pet'] != '') { 
+                if ($record['description'] == '') {
+                    $record['description'] = "Pet: " . $v['pet'];
+                } else {
+                    $record['description'] .= "<br />Pet: " . $v['pet'];
+                }
+                
+            }
+
             array_push($output, $record);
         }
 

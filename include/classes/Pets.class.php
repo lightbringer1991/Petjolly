@@ -82,20 +82,6 @@ class Pets {
 		}
 		return $allPets;
 	}
-
-	public static function getAllPetsBySimilarCondition($field = '', $value = '') {
-		$sql = "SELECT * FROM `meda_pets`";
-		if ($field != '') {
-			$sql .= " WHERE `$field` LIKE '%$value%'";
-		}
-		
-		$allPets = array();
-		$result = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
-		foreach ($result[0] as $r) {
-			array_push($allPets, new Pets($r['id'], $r['customer_id'], $r['name'], $r['type_id'], $r['breed']));
-		}
-		return $allPets;		
-	}
 }
 
 ?>

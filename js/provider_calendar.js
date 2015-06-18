@@ -412,10 +412,7 @@ function createCalendar(elementList, calendarOptions) {
         focus: function(event, ui) {
             // prevent autocomplete from updating the textbox
             event.preventDefault();
-            // manually update the textbox
-            $(this).val(ui.item.label);
-            if (ui.item == null) { $(this).val('please add a new customer'); }
-            else { $(this).val(ui.item.label); }
+            return false;
         },
         select: function(event, ui) {
             // prevent autocomplete from updating the textbox
@@ -423,6 +420,7 @@ function createCalendar(elementList, calendarOptions) {
             // manually update the textbox and hidden field
             $(this).val(ui.item.label);
             $("input[name='appointment_customer_id']").val(ui.item.value);
+            return false;
         },
         response: function(event, ui) {
             if (ui.content.length === 0) {
@@ -432,7 +430,10 @@ function createCalendar(elementList, calendarOptions) {
                 $("div[data-class='customer_error']").empty();
             }
         }
-    });
+    })
+    .autocomplete("instance")._renderItem = function(ul, item) {
+        return $("<li>").append("<a>" + item.label + "<br />" + item.description + "</a>").appendTo(ul);
+    };
 
     // multiselect
     $(elementOps.modalCreateSelector).find("select[name='service_list[]']").multiselect({
