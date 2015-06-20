@@ -2352,142 +2352,73 @@ class Appointments extends MicroGrid {
 
 	 */
 
-	public static function SendReminders()
-
-	{
-
+	public static function SendReminders() {
 		global $objSettings;
 
-	
-
 		include_once('include/messages.inc.php');
-
 		if(!defined('APPHP_LANG_INCLUDED')) define('APPHP_LANG_INCLUDED', true);
-
-
-
 		$approval_required = ModulesSettings::Get('appointments', 'approval_required');
-
 		$cancellation_period = ModulesSettings::Get('appointments', 'cancellation_period');
-
-		
-
 		$patient_arrival_reminder = ModulesSettings::Get('reminder', 'patient_arrival_reminder');
-
 		$patient_confirm_reminder = ModulesSettings::Get('reminder', 'patient_confirm_reminder');		
-
 		$doctor_confirm_reminder = ModulesSettings::Get('reminder', 'doctor_confirm_reminder');
 
-		
-
 		$date_format = get_date_format();
-
 		$time_format = get_time_format(false);
 
-
-
         $sql_main = 'SELECT
-
 					a.id, a.appointment_number, a.patient_id, a.appointment_date, a.appointment_time, a.visit_duration, a.for_whom, a.first_visit,
-
+					a.service_list, a.package_list,
 					'.(PATIENTS_ENCRYPTION ? 'AES_DECRYPT(p.first_name, "'.PASSWORDS_ENCRYPT_KEY.'")' : 'p.first_name').' as pat_first_name,
-
 					'.(PATIENTS_ENCRYPTION ? 'AES_DECRYPT(p.last_name, "'.PASSWORDS_ENCRYPT_KEY.'")' : 'p.last_name').' as pat_last_name,
-
 					p.email as pat_email,
-
 					p.preferred_language as pat_preferred_language,
-
 					d.title	as doc_title, d.first_name as doc_first_name, d.middle_name as doc_middle_name, d.last_name as doc_last_name, d.email as doc_email, d.medical_degree as doc_medical_degree, d.preferred_language as doc_preferred_language,
-
 					sd.name as doc_speciality_name,
-
                     IF(ds.visit_price IS NOT NULL, ds.visit_price, a.visit_price) as visit_price,                    
-
                     IF(id.name IS NOT NULL, id.name, \'\') as insurance_name,
-
                     IF(vrd.name IS NOT NULL, vrd.name, \'\') as visit_reason_name,                    
-
 					da.address as doc_address
-
 				FROM '.TABLE_APPOINTMENTS.' a
-
 					INNER JOIN '.TABLE_PATIENTS.' p ON a.patient_id = p.id
-
 					INNER JOIN '.TABLE_DOCTORS.' d ON a.doctor_id = d.id
-
                     LEFT OUTER JOIN '.TABLE_SPECIALITIES_DESCRIPTION.' as sd ON a.doctor_speciality_id = sd.speciality_id AND sd.language_id = \''.Application::Get('lang').'\'
-
 					LEFT OUTER JOIN '.TABLE_DOCTOR_ADDRESSES.' da ON a.doctor_address_id = da.id
-
                     LEFT OUTER JOIN '.TABLE_DOCTOR_SPECIALITIES.' ds ON a.doctor_id = ds.doctor_id AND a.doctor_speciality_id = ds.speciality_id
-
                     LEFT OUTER JOIN '.TABLE_INSURANCES_DESCRIPTION.' id ON a.insurance_id = id.insurance_id AND id.language_id = \''.Application::Get('lang').'\'
-
                     LEFT OUTER JOIN '.TABLE_VISIT_REASONS_DESCRIPTION.' vrd ON a.visit_reason_id = vrd.visit_reason_id AND vrd.language_id = \''.Application::Get('lang').'\' ';
-
-		
 
 		// 1. ///////////////////////////////////////////////////////////////////////////
 
 		// send arrival reminders to patients
-
         $sql_where = ' WHERE
-
 					a.status = 1 AND
-
 					a.p_arrival_reminder_sent = 0 AND
-
 					a.date_created < DATE_SUB(CONCAT(a.appointment_date, " ", a.appointment_time), INTERVAL '.$patient_arrival_reminder.' HOUR) AND
-
 					(
-
 						"'.date('Y-m-d H:i:s').'" > DATE_SUB(CONCAT(a.appointment_date, " ", a.appointment_time), INTERVAL '.$patient_arrival_reminder.' HOUR) AND  
-
 					    "'.date('Y-m-d H:i:s').'" < CONCAT(a.appointment_date, " ", a.appointment_time)
-
 					)';
-
 		$result = database_query($sql_main.$sql_where, DATA_AND_ROWS, ALL_ROWS);		
 
 		$update_appts_ids = '';
-
 		for($i=0; $i<$result[1]; $i++){
-
 			if($result[0][$i]['pat_email'] != ''){
-
 				$update_appts_ids .= ', '.$result[0][$i]['id']; 
-
-
-
 				////////////////////////////////////////////////////////
-
 				send_email(
-
 					$result[0][$i]['pat_email'],
-
 					$objSettings->GetParameter('admin_email'),
-
 					'arrival_reminder',
-
 					array(
-
 						'{FIRST NAME}' => $result[0][$i]['pat_first_name'],
-
 						'{LAST NAME}'  => $result[0][$i]['pat_last_name'],
-
 						'{WEB SITE}'   => $_SERVER['SERVER_NAME'],
-
 						'{APPOINTMENT DETAILS}' => self::DrawAppointmentTable($result[0][$i], $date_format, $time_format, false),
-
 						'{BASE URL}'   => APPHP_BASE,
-
 						'{YEAR}' 	   => date('Y')
-
 					),
-
 					$result[0][$i]['pat_preferred_language']
-
 				);
 
 				////////////////////////////////////////////////////////				
