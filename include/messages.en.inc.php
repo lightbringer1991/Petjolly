@@ -1206,7 +1206,7 @@ define("_WELCOME_DOCTOR_TEXT","<p>Hello <b>_FIRST_NAME_ _LAST_NAME_</b>!</p><p>W
 <p><b>&#8226;</b> <a href='index.php?provider=my_addresses'>My Addresses</a> page allows you to manage the addresses where doctor accepts customers.</p>
 <p><b>&#8226;</b> <a href='index.php?provider=appointments'>My Appointments</a> page allows you to review and manage your appointments.</p>");
 */
-define("_WELCOME_DOCTOR_TEXT","<p>Hello <b>_FIRST_NAME_ _LAST_NAME_</b>!</p><p>Welcome to Doctor's Account Panel, that allows you to view account status, manage your account settings etc.</p><p>_TODAY_<br />_LAST_LOGIN_</p>");
+define("_WELCOME_DOCTOR_TEXT","<p>Hello <b>_FIRST_NAME_ _LAST_NAME_</b>!</p><p>Welcome to Provider's Account Panel, that allows you to view account status, manage your account settings etc.</p><p>_TODAY_<br />_LAST_LOGIN_</p>");
 define("_WELCOME_PATIENT_TEXT","<p>Hello <b>_FIRST_NAME_ _LAST_NAME_</b>!</p>
 <p>Welcome to Customer's Account Panel, that allows you to view account status, manage your account settings etc.</p>
 <p>_TODAY_<br />_LAST_LOGIN_</p>
