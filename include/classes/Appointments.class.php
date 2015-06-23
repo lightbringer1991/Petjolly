@@ -2378,7 +2378,8 @@ class Appointments extends MicroGrid {
                     IF(ds.visit_price IS NOT NULL, ds.visit_price, a.visit_price) as visit_price,                    
                     IF(id.name IS NOT NULL, id.name, \'\') as insurance_name,
                     IF(vrd.name IS NOT NULL, vrd.name, \'\') as visit_reason_name,                    
-					da.address as doc_address
+					da.address as doc_address,
+					d.b_address, d.b_city, d.b_state, d.b_country, d.b_zipcode
 				FROM '.TABLE_APPOINTMENTS.' a
 					INNER JOIN '.TABLE_PATIENTS.' p ON a.patient_id = p.id
 					INNER JOIN '.TABLE_DOCTORS.' d ON a.doctor_id = d.id
