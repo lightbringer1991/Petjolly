@@ -166,20 +166,6 @@ switch ($option) {
             'service_list' => implode(',', $service_list),
             'package_list' => implode(',', $package_list),
         ));
-/*
-        $sql = "SELECT `id` FROM `meda_appointments` WHERE `doctor_id`=$doc_id
-                    AND `appointment_date`='$app_date'
-                    AND `appointment_time`='$app_time'
-                    AND `visit_duration`='$duration'";
-        $result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
-        $app_id = $result[0]['id'];
-        $sql = sprintf("UPDATE `meda_appointments` SET
-                    `color`='%s',
-                    `service_list`='%s',
-                    `package_list`='%s'
-                     WHERE `id`=$app_id", $color, implode(',', $service_list), implode(',', $package_list));
-        database_void_query($sql);
-*/
         break;
     case "deleteEvent":
         $id = isset($_POST['id']) ? mysqli_real_escape_string($database_connection, $_POST['id']) : '';
@@ -202,6 +188,21 @@ switch ($option) {
         */
         $customerList = array();
 
+        $sql = "SELECT  `c`.`id`, CONCAT(`c`.`first_name`, ' ', `c`.`last_name`) AS `fullName`, 
+                        `c`.`phone`, `c`.`email`, 
+                        GROUP_CONCAT(`pe`.`name` SEPARATOR ',') AS `pets`
+                FROM `meda_patients` AS `c`
+                LEFT JOIN `providers_customers` AS `pc` ON `c`.`id`=`pc`.`customer_id`
+                LEFT JOIN `meda_pets` AS `pe` ON `c`.`id`=`pe`.`customer_id`
+                WHERE `pc`.`provider_id`=$doc_id
+                GROUP BY `c`.`id` 
+                HAVING (`fullName` LIKE '%$term%') OR (`c`.`phone` LIKE '%$term%') OR (`pets` LIKE '%$term%')";
+
+        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
+        foreach ($results[0] as $r) {
+            array_push($customerList, $r);
+        }
+/*
         // search by customer name or phone number
         $sql = "SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`, `phone`
                 FROM `meda_patients` 
@@ -242,9 +243,23 @@ switch ($option) {
                 );
             }
         }
-
+*/
         // format the output
         $output = array();
+
+        foreach ($results[0] as $r) {
+            $record = array(
+                'id' => '',
+                'label' => $r['fullName'],
+                'description' => "Phone: {$r['phone']}<br />Pets: {$r['pets']}",
+                'phone' => $r['phone'],
+                'email' => $r['email'],
+                'pets' => $r['pets'],
+                'value' => $r['id'],
+            );
+            array_push($output, $record);
+        }
+/*
         foreach ($customerList as $k => $v) {
             $record = array(
                 'id' => '',
@@ -264,7 +279,7 @@ switch ($option) {
 
             array_push($output, $record);
         }
-
+*/
         echo json_encode($output);
         break;
     case "createCustomer":

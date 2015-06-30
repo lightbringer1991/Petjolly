@@ -285,6 +285,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
         <div class="modal-body"></div>
         <div class="modal-footer">
             <a href="#" class="btn btn-danger" data-option="remove">Cancel</a>
+            <a href="#" class="btn btn-info" data-option="add-new">Add New</a>
             <a href="#" class="btn btn-info" data-option="edit">Edit</a>
         	<a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
         </div>
@@ -392,7 +393,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 							<tbody>
 								<tr>
 									<td width="25%" align="left">
-										<label for="customer_name">Customer Name <span class="required">*</span>:</label>
+										<label for="customer_name">Customer/Pet Name <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
 										<input name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
@@ -403,6 +404,30 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<a href="#cal_add_customer" data-toggle="modal" style="color: blue">Add a new customer</a>
 									</td>
 								</tr>
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="customer_phone">Phone:</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="customer_email">Email:</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input name="customer_email" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="customer_pets">Pets:</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input name="customer_pets" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                    </td>
+                                </tr>
 								<tr>
 									<td width="25%" align="left">
 										<label for="service_list[]">Service List<span class="required">*</span>:</label>
@@ -449,7 +474,17 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<label for="duration">Duration <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
-										<input name="duration" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+<!--										<input name="duration" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />   -->
+                                        <select name="duration" style="width:250px;">
+<?php
+    $interval = 15;
+    $currentDuration = 0;
+    while ($currentDuration < 120) {
+        $currentDuration += $interval;
+        echo "<option value='$currentDuration'>$currentDuration minutes</option>";
+    }
+?>
+                                        </select>
 									</td>
 								</tr>
 								<tr>

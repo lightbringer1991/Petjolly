@@ -76,6 +76,7 @@ function createCalendar(elementList, calendarOptions) {
 
         btnEditSelector: 'a[data-option="edit"]',
         btnDeleteSelector: 'a[data-option="remove"]',
+        btnAddNewSelector: 'a[data-option="add-new"]',
         btnCreateSubmitSelector: 'button[data-role="appointment-submit"]',
         btnEditSubmitSelector: 'button[data-role="appointment-submit"]',
         btnAddCustomerSelector: 'button[data-role="calendar-customer-submit"]',
@@ -300,11 +301,10 @@ function createCalendar(elementList, calendarOptions) {
                 $(elementOps.modalEditSelector).find('h4.modal-title').html("Edit Appointment");
                 $(elementOps.modalEditSelector).find("input[name='appointment_id']").val(eventData.id);
                 $(elementOps.modalEditSelector).find("input[name='appointment_customer_id']").val(eventData.customer_id);
-                $(elementOps.modalEditSelector).find("input[name='appointment_customer_id']").val(eventData.customer_id);
                 $(elementOps.modalEditSelector).find("input[name='customer_name']").val(eventData.first_name + " " + eventData.last_name);
                 $(elementOps.modalEditSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
                 $(elementOps.modalEditSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
-                $(elementOps.modalEditSelector).find("input[name='duration']").val(eventData.visit_duration);
+                $(elementOps.modalEditSelector).find("select[name='duration']").val(eventData.visit_duration);
                 $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
 
                 var services = eventData.service_list.split(",");
@@ -325,7 +325,7 @@ function createCalendar(elementList, calendarOptions) {
         var startDate = calendar.start.format("YYYY-MM-DD");
         var startTime = calendar.start.format("HH:mm");
         $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create new Appointment");
-        $(elementOps.modalCreateSelector).find("input[name='duration']").val(duration);
+        $(elementOps.modalCreateSelector).find("select[name='duration']").val(duration);
         $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(startDate);
         $(elementOps.modalCreateSelector).find("input[name='appointment_time']").val(startTime);
 
@@ -393,6 +393,7 @@ function createCalendar(elementList, calendarOptions) {
         });
     });
 
+    // cancel event
     $(elementOps.modalViewSelector).find(elementOps.btnDeleteSelector).on('click', function() {
         $.ajax({
             type: 'POST',
@@ -403,6 +404,25 @@ function createCalendar(elementList, calendarOptions) {
                 $(elementOps.calendarSelector).fullCalendar('refetchEvents');
             }
         });
+    });
+
+    // copy time and duration to create form
+    $(elementOps.modalViewSelector).find(elementOps.btnAddNewSelector).on('click', function() {
+        $.ajax({
+            type: 'POST',
+            url: elementOps.ajaxRetrieveDescription,
+            data: { 'id': calendar.id, 'mode': 'getInfo' },
+            async: false,
+            success: function(data) {
+                eventData = JSON.parse(data);
+                $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create New Appointment");
+                $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
+                $(elementOps.modalCreateSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
+                $(elementOps.modalCreateSelector).find("select[name='duration']").val(eventData.visit_duration);
+            }
+        });
+        $(elementOps.modalViewSelector).modal('hide');
+        $(elementOps.modalCreateSelector).modal('show');
     });
 
     // autocomplete customer details
@@ -419,7 +439,10 @@ function createCalendar(elementList, calendarOptions) {
             event.preventDefault();
             // manually update the textbox and hidden field
             $(this).val(ui.item.label);
-            $("input[name='appointment_customer_id']").val(ui.item.value);
+            $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val(ui.item.value);
+            $(elementOps.modalCreateSelector).find("input[name='customer_phone']").val(ui.item.phone);
+            $(elementOps.modalCreateSelector).find("input[name='customer_email']").val(ui.item.email);
+            $(elementOps.modalCreateSelector).find("input[name='customer_pets']").val(ui.item.pets);
             return false;
         },
         response: function(event, ui) {
