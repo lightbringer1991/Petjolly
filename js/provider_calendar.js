@@ -233,30 +233,6 @@ function createCalendar(elementList, calendarOptions) {
 		eventAfterRender: function(event, element, view) {
 			element.find('div.fc-title').html(event.name);
 		}
-/*
-        viewRender: function(view, element) {
-            var startDate = moment(view.start).format('YYYY-MM-DD');
-            var endDate = moment(view.end).format('YYYY-MM-DD');
-            timeoff = getTimeOff(elementOps.ajaxFetchTimeOff, startDate, endDate);
-            for (var i = 0; i < timeoff.length; i++) {
-                console.log(timeoff[i]);
-                var start = new Date(timeoff[i].start);
-                var end = new Date(timeoff[i].end);
-                $(elementOps.calendarSelector).fullCalendar('renderEvent', { "title": "Time Off", "start": start, "end": end, "className": "disabled" });
-            }
-        }
-*/
-/*
-        dayRender: function(date, cell) {
-            var currentDate = moment(date);
-            var currentTime = '';
-            for (var i = 0; i < timeoff.length; i++) {
-                if (currentDate.isAfter(timeoff[i]['start']) && currentDate.isBefore(timeoff[i]['end'])) {
-                    $(cell).addClass('disabled');
-                }
-            }
-        }
-*/
 	};
 	var ops = $.extend(defaultsOptions, calendarOptions);
 
@@ -354,6 +330,26 @@ function createCalendar(elementList, calendarOptions) {
         }
     });
 
+    // calendar form validation
+    $(elementOps.modalCreateSelector).find('#form-appointment').validate({
+        rules: {
+            customer_phone: {
+                required: true
+            },
+            'service_list[]': {
+                required: true
+            }
+        },
+        messages: {
+            customer_phone: {
+                required: "Please enter customer name"
+            },
+            'service_list[]': {
+                required: true
+            }
+        }
+    });
+
     // submit new event
     $(elementOps.modalCreateSelector).find(elementOps.btnCreateSubmitSelector).on('click', function() {
         if ($(elementOps.modalCreateSelector).find("input[name='appointment_id']").val() == '') {
@@ -361,6 +357,9 @@ function createCalendar(elementList, calendarOptions) {
                 alert("Invalid customer");
                 return false;
             }
+
+            if (!$(elementOps.modalCreateSelector).find('#form-appointment').valid()) { return false; }
+
             var data = $(elementOps.modalCreateSelector).find("form").serialize();
 
             $.ajax({

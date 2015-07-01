@@ -1774,6 +1774,7 @@ class Appointments extends MicroGrid {
         $patient_id = isset($params['patient_id']) ? $params['patient_id'] : '';
         $service_list = isset($params['service_list']) ? $params['service_list'] : '';
         $package_list = isset($params['package_list']) ? $params['package_list'] : '';
+        $color = isset($params['color']) ? $params['color'] : '';
 
 
 		$sql = 'SELECT id, appointment_number
@@ -1899,6 +1900,7 @@ class Appointments extends MicroGrid {
 					doctor_address_id,
 					service_list,
 					package_list,
+					color,
 					patient_id,
 					date_created,
 					appointment_date,
@@ -1927,6 +1929,7 @@ class Appointments extends MicroGrid {
 					'.(int)$daddid.',
 					\''.$service_list.'\',
 					\''.$package_list.'\',
+					\''.$color.'\',
 					'.(int)$patient_id_in_sql.',
 					\''.date('Y-m-d H:i:s').'\',
 					\''.$date.'\',

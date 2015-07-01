@@ -34,7 +34,9 @@ $("input[data-role='spectrum']").spectrum({
     ]
 });
 
-$('#tp1').timepicker();
+$('#tp1').timepicker({
+	stepMinute: 15
+});
 $('#tp2').timepicker();
 
 function clearForm(form) {

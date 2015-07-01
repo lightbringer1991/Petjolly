@@ -165,6 +165,7 @@ switch ($option) {
             'patient_id' => $cus_id,
             'service_list' => implode(',', $service_list),
             'package_list' => implode(',', $package_list),
+            'color' => $color
         ));
         break;
     case "deleteEvent":

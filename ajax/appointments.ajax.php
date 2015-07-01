@@ -69,6 +69,7 @@ switch ($option) {
                 </tr>";
         foreach ($service_list as $s) {
             $aService = Services::getServiceById($s);
+            if ($aService == null) { break; }
             $total += $aService -> getPrice();
             echo "<tr>
                     <td></td>
@@ -84,6 +85,7 @@ switch ($option) {
                 </tr>";
         foreach ($package_list as $p) {
             $aPackage = Packages::getPackageById($p);
+            if ($aPackage == null) { break; }
             $total += $aPackage -> getPrice();
             echo "<tr>
                     <td></td>

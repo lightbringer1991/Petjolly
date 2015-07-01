@@ -433,7 +433,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<label for="service_list[]">Service List<span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
-										<select name="service_list[]" style="width:250px;" multiple="multiple" size="5">
+										<select name="service_list[]" style="width:250px;" multiple="multiple" size="5" class="required">
                                             <optgroup label="Services">
 <?php
 	$services = Services::getAllActiveServicesByProviderID($objLogin -> getLoggedID());
@@ -566,12 +566,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 	</div>
 
 <script src="ajaxCalendar/js/custom.js"></script>
-<!--
-<script src="custom_libraries/Dropdown_MultipleSelect/dropdown.js"></script>
--->
 <script type="text/javascript">
-
-	
 $(document).ready(function() {
 	// initialize the calendar
 	createCalendar({

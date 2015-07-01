@@ -49,6 +49,7 @@
    <link href="<?php echo APPHP_BASE; ?>templates/<?php echo Application::Get('provider_template');?>/css/stylesheet.css" type="text/css" rel="stylesheet"/>
  
  	<script src="assets/global/plugins/jquery-1.11.0.min.js" type="text/javascript"></script>
+
  
  <!-- date picker -->
 	<link href="custom_libraries/datepicker/css/datepicker.css" rel="stylesheet" />
@@ -135,6 +136,12 @@
     
     <script src="ajaxCalendar/js/g.map.js"></script>
 	<!-- End AJAX Calendar plugins -->
+
+  <!-- BEGIN jquery-validation -->
+  <script src="custom_libraries/jquery-validation-1.13.1/dist/jquery.validate.js"></script>
+  <script src="custom_libraries/jquery-validation-1.13.1/dist/additional-methods.min.js"></script>
+  <!-- END jquery-validation -->
+
 </head>
 
 <body class="skin-yellow">
@@ -232,11 +239,6 @@
 	<!-- BEGIN HighCharts -->
 	<script type="text/javascript" src="custom_libraries/Highcharts-4.1.4/js/highcharts.js"></script>
 	<!-- END HighCharts -->
-	
-	<!-- BEGIN jquery-validation -->
-	<script src="custom_libraries/jquery-validation-1.13.1/dist/jquery.validate.js"></script>
-	<script src="custom_libraries/jquery-validation-1.13.1/dist/additional-methods.min.js"></script>
-	<!-- END jquery-validation -->
 	
 	<!-- Start Google Address Suggestion box -->
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=places">  </script>
