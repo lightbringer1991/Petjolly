@@ -19,7 +19,7 @@
 	$(form).find('button[type="submit"]').html("Add Event");
 	$(form).find('input').val('');
 	$(form).find("input[name='form_type']").val('add');
-	$(form).find("input[name='color']").spectrum('set', '#587ca3');
+	$(form).find("input[name='color']").spectrum('set', '#0000FF');
 	
 	$(form).find("textarea").each(function() { $(this).val(""); });
 	$(form).find('select[multiple="multiple"] option:selected').each(function() {
@@ -360,8 +360,8 @@ function createCalendar(elementList, calendarOptions) {
 
             if (!$(elementOps.modalCreateSelector).find('#form-appointment').valid()) { return false; }
 
-            var data = $(elementOps.modalCreateSelector).find("form").serialize();
-
+            var data = $(elementOps.modalCreateSelector).find("form").serializeArray();
+            data.color = $(elementOps.modalCreateSelector).find("input[name='color']").val();
             $.ajax({
                 type: 'POST',
                 url: elementOps.ajaxEventSave,
