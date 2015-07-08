@@ -2866,6 +2866,7 @@ class Appointments extends MicroGrid {
 							`meda_patients`.`id` AS `customer_id`,
 							`first_name`, 
 							`last_name`,
+							`status`,
 							`color`,
 							`service_list`,
 							`package_list`
@@ -2902,6 +2903,10 @@ class Appointments extends MicroGrid {
                     FROM `meda_appointments`, `meda_patients`
                     WHERE `doctor_id`=$id AND `patient_id`=`meda_patients`.`id` AND `appointment_date`>NOW() AND MONTH(`appointment_date`)=MONTH(NOW()) AND YEAR(`appointment_date`)=YEAR(NOW()) AND `status`!=2";
         return database_query($sql, DATA_AND_ROWS, ALL_ROWS);
+    }
+    public static function updateField($id, $field, $value) {
+    	$sql = "UPDATE `meda_appointments` SET `$field`='$value' WHERE `id`=$id";
+    	database_void_query($sql);
     }
 }
 

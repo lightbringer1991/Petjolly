@@ -9,6 +9,11 @@ $option = isset($_REQUEST['option']) ? mysqli_real_escape_string($database_conne
 $mode = isset($_REQUEST['mode']) ? mysqli_real_escape_string($database_connection, $_REQUEST['mode']) : '';
 $doc_id = Session::Get("session_account_id");
 
+$statusColor = array(
+    3 => '#FF8000',
+    4 => '#00FF00'
+);
+
 switch ($option) {
 	case "eventDescription":
 		$id = isset($_POST['id']) ? mysqli_real_escape_string($database_connection, $_POST['id']) : '';
@@ -33,12 +38,22 @@ switch ($option) {
             }
             $packageList .= "</ul>";
 
-			echo '<b>Customer Name: </b>' . $event[0]['first_name'] . " " . $event[0]['last_name'] . "<br />" . 
-				'<b>Appointment Time: </b>' . $event[0]['appointment_date'] . " " . $event[0]['appointment_time'] . '<br />' .
-				'<b>Duration: </b>' . $event[0]['visit_duration'] . ' minutes<br />' .
-                '<b>Services: </b><br />' . $serviceList . '<br />' .
-                '<b>Packages: </b><br />' . $packageList . '<br />';
+            $output = array(
+                'description' =>    '<b>Customer Name: </b>' . $event[0]['first_name'] . " " . $event[0]['last_name'] . "<br />" . 
+                                    '<b>Appointment Time: </b>' . $event[0]['appointment_date'] . " " . $event[0]['appointment_time'] . '<br />' .
+                                    '<b>Duration: </b>' . $event[0]['visit_duration'] . ' minutes<br />' .
+                                    '<b>Services: </b><br />' . $serviceList . '<br />' .
+                                    '<b>Packages: </b><br />' . $packageList . '<br />',
+                'status' => (($event[0]['status'] == 3) || ($event[0]['status'] == 4)) ? $event[0]['status'] : 0
+            );
+            echo json_encode($output);
 		}
+        break;
+    case "changeStatus":
+        $value = $_POST['status'];
+        $id = $_POST['id'];
+        Appointments::updateField($id, 'status', $value);
+        Appointments::updateField($id, 'color', $statusColor[$value]);
         break;
     case "getTimeOff":
         $start = isset($_REQUEST['start']) ? mysqli_real_escape_string($database_connection, $_REQUEST['start']) : '';
@@ -203,48 +218,6 @@ switch ($option) {
         foreach ($results[0] as $r) {
             array_push($customerList, $r);
         }
-/*
-        // search by customer name or phone number
-        $sql = "SELECT `id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`, `phone`
-                FROM `meda_patients` 
-                LEFT JOIN `providers_customers` ON `id`=`customer_id`
-                WHERE `provider_id`=$doc_id 
-                    AND ((CONCAT(`first_name`, ' ', `last_name`) LIKE '%$term%') OR (`phone` LIKE '%$term%'))";
-
-        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
-        foreach ($results[0] as $r) {
-            $customerList[$r['id']] = array(
-                'fullName' => $r['fullName'],
-                'phone' => $r['phone'],
-                'pet' => ''
-            );
-        }
-        // search pet name
-        $sql = "SELECT `pa`.`id`, CONCAT(`first_name`, ' ', `last_name`) AS `fullName`, `pe`.`name`
-                    FROM `meda_patients` AS `pa`
-                    LEFT JOIN `providers_customers` AS `pc` ON `pa`.`id`=`pc`.`customer_id`
-                    LEFT JOIN `meda_pets` AS `pe` ON `pc`.`customer_id`=`pe`.`customer_id`
-                    WHERE `pc`.`provider_id`=$doc_id
-                    AND `pe`.name LIKE '%$term%'";
-        $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
-
-        // concatenate pet names with the same owner
-        foreach ($results[0] as $r) {
-            if (isset($customerList[$r['id']])) {
-                if ($customerList[$r['id']]['pet'] != '') {
-                    $customerList[$r['id']]['pet'] .= ", {$r['name']}";
-                } else {
-                    $customerList[$r['id']]['pet'] .= $r['name'];
-                }
-            } else {
-                $customerList[$r['id']] = array(
-                    'fullName' => $r['fullName'],
-                    'phone' => '',
-                    'pet' => $r['name']
-                );
-            }
-        }
-*/
         // format the output
         $output = array();
 
@@ -260,27 +233,6 @@ switch ($option) {
             );
             array_push($output, $record);
         }
-/*
-        foreach ($customerList as $k => $v) {
-            $record = array(
-                'id' => '',
-                'label' => $v['fullName'],
-                'description' => '',
-                'value' => $k
-            );
-            if ($v['phone'] != '') { $record['description'] = "Phone: " . $v['phone']; }
-            if ($v['pet'] != '') { 
-                if ($record['description'] == '') {
-                    $record['description'] = "Pet: " . $v['pet'];
-                } else {
-                    $record['description'] .= "<br />Pet: " . $v['pet'];
-                }
-                
-            }
-
-            array_push($output, $record);
-        }
-*/
         echo json_encode($output);
         break;
     case "createCustomer":

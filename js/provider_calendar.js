@@ -50,6 +50,7 @@ function createCalendar(elementList, calendarOptions) {
 		ajaxFetchEvent: 'ajax/calendar.ajax.php?option=getAllEvents',
         ajaxFetchTimeOff: 'ajax/calendar.ajax.php?option=getTimeOff',
 		ajaxUiUpdate: 'ajax/calendar.ajax.php?option=uiUpdateEvent',
+        ajaxChangeStatus: 'ajax/calendar.ajax.php?option=changeStatus',
 		ajaxEventSave: 'ajax/calendar.ajax.php?option=createEvent',
 		ajaxEventQuickSave: 'includes/cal_quicksave.php',
 		ajaxEventDelete: 'ajax/calendar.ajax.php?option=deleteEvent',
@@ -259,8 +260,11 @@ function createCalendar(elementList, calendarOptions) {
             url: elementOps.ajaxRetrieveDescription,
             data: { 'id': calendar.id },
             async: false,
+            datatype: 'json',
             success: function(data) {
-                $(elementOps.modalViewSelector).find(".modal-body").html(data);
+                var d = JSON.parse(data);
+                $(elementOps.modalViewSelector).find("[data-role='appointment-details']").html(d.description);
+                $(elementOps.modalViewSelector).find("input[name='status'][value='" + d.status + "']").prop('checked', true);
             }
         });
         $(elementOps.modalViewSelector).modal('show');
@@ -307,6 +311,20 @@ function createCalendar(elementList, calendarOptions) {
 
         $(elementOps.modalCreateSelector).modal('show');
     }
+
+    // change status to paid/checkin in View Appointment dialog
+    // change color to orange if checkin, green if paid
+    $(elementOps.modalViewSelector).find("input[name='status']").on('click', function(event) {
+        var value = $(event.currentTarget).val();
+        $.ajax({
+            type: 'POST',
+            url: elementOps.ajaxChangeStatus,
+            data: { 'status': value, 'id': calendar.id },
+            success: function() {
+                $(elementOps.calendarSelector).fullCalendar('refetchEvents');
+            }
+        });
+    });
 
     // open edit modal
     $(elementOps.modalViewSelector).find(elementOps.btnEditSelector).on('click', function() {

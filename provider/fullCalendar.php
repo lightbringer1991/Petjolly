@@ -282,7 +282,19 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			<h4 class="modal-title">Appointment details</h4>
         </div>
-        <div class="modal-body"></div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-10" data-role="appointment-details">
+                </div>
+                <div class="col-md-2" data-role="appointment-status">
+                    <form data-id="form-status">
+                        <input name="status" type="radio" value="3" /> Check In <br />
+                        <input name="status" type="radio" value="4" /> Paid
+                        <input name="status" type="radio" value="0" style="display: none;" />
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="modal-footer">
             <a href="#" class="btn btn-danger" data-option="remove">Cancel</a>
             <a href="#" class="btn btn-info" data-option="add-new">Add New</a>
