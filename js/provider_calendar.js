@@ -232,7 +232,7 @@ function createCalendar(elementList, calendarOptions) {
             }
 		},
 		eventAfterRender: function(event, element, view) {
-			element.find('div.fc-title').html(event.name);
+			element.find('div.fc-title').html(event.title + " - " + event.pets);
 		}
 	};
 	var ops = $.extend(defaultsOptions, calendarOptions);
@@ -285,7 +285,10 @@ function createCalendar(elementList, calendarOptions) {
                 $(elementOps.modalEditSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
                 $(elementOps.modalEditSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
                 $(elementOps.modalEditSelector).find("select[name='duration']").val(eventData.visit_duration);
-                $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
+//                $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
+                $(elementOps.modalEditSelector).find("input[name='customer_phone']").val(eventData.phone);
+                $(elementOps.modalEditSelector).find("input[name='customer_email']").val(eventData.email);
+                $(elementOps.modalEditSelector).find("input[name='customer_pets']").val(eventData.pets);
 
                 var services = eventData.service_list.split(",");
                 for (var i = 0; i < services.length; i++) {
@@ -305,12 +308,20 @@ function createCalendar(elementList, calendarOptions) {
         var startDate = calendar.start.format("YYYY-MM-DD");
         var startTime = calendar.start.format("HH:mm");
         $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create new Appointment");
+        $(elementOps.modalCreateSelector).find("input").val("");
+        $(elementOps.modalCreateSelector).find("select").val("");
+
         $(elementOps.modalCreateSelector).find("select[name='duration']").val(duration);
         $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(startDate);
         $(elementOps.modalCreateSelector).find("input[name='appointment_time']").val(startTime);
 
         $(elementOps.modalCreateSelector).modal('show');
     }
+
+    $('a[data-role="new_appointment"]').on('click', function() {
+        $(elementOps.modalCreateSelector).find("input").val("");
+        $(elementOps.modalCreateSelector).find("select").val("");        
+    });
 
     // change status to paid/checkin in View Appointment dialog
     // change color to orange if checkin, green if paid

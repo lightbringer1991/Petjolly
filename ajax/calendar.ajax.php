@@ -10,6 +10,7 @@ $mode = isset($_REQUEST['mode']) ? mysqli_real_escape_string($database_connectio
 $doc_id = Session::Get("session_account_id");
 
 $statusColor = array(
+    1 => '#0000ff',
     3 => '#FF8000',
     4 => '#00FF00'
 );
@@ -40,6 +41,7 @@ switch ($option) {
 
             $output = array(
                 'description' =>    '<b>Customer Name: </b>' . $event[0]['first_name'] . " " . $event[0]['last_name'] . "<br />" . 
+                                    '<b>Pet Name: </b>' . $event[0]['pets'] . "<br />" .
                                     '<b>Appointment Time: </b>' . $event[0]['appointment_date'] . " " . $event[0]['appointment_time'] . '<br />' .
                                     '<b>Duration: </b>' . $event[0]['visit_duration'] . ' minutes<br />' .
                                     '<b>Services: </b><br />' . $serviceList . '<br />' .
@@ -88,7 +90,8 @@ switch ($option) {
                 'title' => $e['first_name'] . " " . $e['last_name'],
                 'start' => $startTimeStr,
                 'end' => $endTimeStr,
-                'color' => $e['color']
+                'color' => $e['color'],
+                'pets' => $e['pets']
             );
 
             array_push($jsonArray, $anEvent);
@@ -129,7 +132,8 @@ switch ($option) {
         $app_date = isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '';
         $app_time = isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '';
         $duration = isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '';
-        $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
+        $pets = isset($_POST['customer_pets']) ? mysqli_real_escape_string($database_connection, $_POST['customer_pets']) : '';
+        // $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
 
         $service_list = array();
         $package_list = array();
@@ -137,7 +141,6 @@ switch ($option) {
             if (substr($sp, 0, 1) == 'p') { array_push($package_list, substr($sp, 1)); }
             else { array_push($service_list, substr($sp, 1)); }
         }
-
         $sql = sprintf("UPDATE `meda_appointments` SET
                         `patient_id`='%s',
                         `service_list`='%s',
@@ -145,17 +148,39 @@ switch ($option) {
                         `appointment_date`='%s',
                         `appointment_time`='%s',
                         `visit_duration`='%s',
-                        `color`='%s' WHERE `id`='%s'",
+                        `pets`='%s'
+                        WHERE `id`='%s'",
                         $cus_id,
                         implode(',', $service_list),
                         implode(',', $package_list),
                         $app_date,
                         $app_time,
                         $duration,
-                        $color,
+                        $pets,
                         $app_id
-             );
-        database_query($sql);
+        );
+        echo $sql;
+
+        // $sql = sprintf("UPDATE `meda_appointments` SET
+        //                 `patient_id`='%s',
+        //                 `service_list`='%s',
+        //                 `package_list`='%s',
+        //                 `appointment_date`='%s',
+        //                 `appointment_time`='%s',
+        //                 `visit_duration`='%s',
+        //                 `color`='%s' 
+        //                 WHERE `id`='%s'",
+        //                 $cus_id,
+        //                 implode(',', $service_list),
+        //                 implode(',', $package_list),
+        //                 $app_date,
+        //                 $app_time,
+        //                 $duration,
+        //                 $color,
+        //                 $app_id
+        //      );
+
+        database_void_query($sql);
         break;
     case "createEvent":
         $cus_id = isset($_POST['appointment_customer_id']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_customer_id']) : '';
@@ -163,7 +188,8 @@ switch ($option) {
         $app_date = isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '';
         $app_time = isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '';
         $duration = isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '';
-        $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
+        $pets = isset($_POST['customer_pets']) ? mysqli_real_escape_string($database_connection, $_POST['customer_pets']) : '';
+       // $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
 
         $service_list = array();
         $package_list = array();
@@ -180,7 +206,8 @@ switch ($option) {
             'patient_id' => $cus_id,
             'service_list' => implode(',', $service_list),
             'package_list' => implode(',', $package_list),
-            'color' => $color
+            'color' => $statusColor[1],
+            'pets' => $pets
         ));
         break;
     case "deleteEvent":

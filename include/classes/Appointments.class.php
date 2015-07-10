@@ -1775,24 +1775,17 @@ class Appointments extends MicroGrid {
         $service_list = isset($params['service_list']) ? $params['service_list'] : '';
         $package_list = isset($params['package_list']) ? $params['package_list'] : '';
         $color = isset($params['color']) ? $params['color'] : '';
+        $pets = isset($params['pets']) ? $params['pets'] : '';
 
 
 		$sql = 'SELECT id, appointment_number
-
 				FROM '.TABLE_APPOINTMENTS.'
-
 				WHERE
-
 					doctor_id = '.(int)$docid.' AND
-
 				   (status = 0 OR status = 1) AND
-
 					patient_id = '.(int)$objLogin->GetLoggedID().' AND
-
 					appointment_date = \''.$date.'\' AND
-
 					appointment_time = \''.$start_time.':00\'';
-
 		$result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
 
 		if($result[1] > 0){
@@ -1901,6 +1894,7 @@ class Appointments extends MicroGrid {
 					service_list,
 					package_list,
 					color,
+					pets,
 					patient_id,
 					date_created,
 					appointment_date,
@@ -1930,6 +1924,7 @@ class Appointments extends MicroGrid {
 					\''.$service_list.'\',
 					\''.$package_list.'\',
 					\''.$color.'\',
+					\''.$pets.'\',
 					'.(int)$patient_id_in_sql.',
 					\''.date('Y-m-d H:i:s').'\',
 					\''.$date.'\',
@@ -2371,7 +2366,7 @@ class Appointments extends MicroGrid {
 
         $sql_main = 'SELECT
 					a.id, a.appointment_number, a.patient_id, a.appointment_date, a.appointment_time, a.visit_duration, a.for_whom, a.first_visit,
-					a.service_list, a.package_list,
+					a.service_list, a.package_list, a.pets
 					'.(PATIENTS_ENCRYPTION ? 'AES_DECRYPT(p.first_name, "'.PASSWORDS_ENCRYPT_KEY.'")' : 'p.first_name').' as pat_first_name,
 					'.(PATIENTS_ENCRYPTION ? 'AES_DECRYPT(p.last_name, "'.PASSWORDS_ENCRYPT_KEY.'")' : 'p.last_name').' as pat_last_name,
 					p.email as pat_email,
@@ -2821,12 +2816,13 @@ class Appointments extends MicroGrid {
 		$output  = '<table width="100%" border="0" cellspacing="0" cellpadding="3" style="border:1px solid #d1d2d3">';
 		$output .= '<tr style="background-color:#e1e2e3;font-weight:bold;font-size:13px;"><th align="left" colspan="2">&nbsp;<b>'._APPOINTMENT_DETAILS.'</b></th></tr>';
 		$output .= '<tr><td width="27%">'._APPOINTMENT_NUMBER.': </td><td>'.$result['appointment_number'].'</td></tr>';
-//		$output .= '<tr><td>'._DESCRIPTION.': </td><td>'._APPOINTMENT_WITH_DOCTOR.'</td></tr>';
+		// $output .= '<tr><td>'._DESCRIPTION.': </td><td>'._APPOINTMENT_WITH_DOCTOR.'</td></tr>';
 		$output .= '<tr><td>'._WHEN.': </td><td>'.$date_formatted.' '._AT_TIME.' '.$start_time_formatted.' ('.$week_day.')</td></tr>';
-		$output .= '<tr><td>'._WHO.' ('._PATIENT.'): </td><td>'.$result['pat_first_name'].' '. $result['pat_last_name'].'</td></tr>';
-//		$output .= '<tr><td>'._WITH.' ('._DOCTOR.'): </td><td>'.$result['doc_title'].' '.$result['doc_first_name'].' '.$result['doc_middle_name'].' '.$result['doc_last_name'].' '.$result['doc_medical_degree'].'</td></tr>';
+		// $output .= '<tr><td>'._WHO.' ('._PATIENT.'): </td><td>'.$result['pat_first_name'].' '. $result['pat_last_name'].'</td></tr>';
+		$output .= '<tr><td>'._WHO.' ('._PATIENT.'): </td><td>'.$result['pets'].'</td></tr>';
+		// $output .= '<tr><td>'._WITH.' ('._DOCTOR.'): </td><td>'.$result['doc_title'].' '.$result['doc_first_name'].' '.$result['doc_middle_name'].' '.$result['doc_last_name'].' '.$result['doc_medical_degree'].'</td></tr>';
         $output .= '<tr><td>'._WITH.' ('._DOCTOR.'): </td><td>'.$result['doc_business_name'].'</td></tr>';
-//		$output .= '<tr><td>'._DOCTOR_SPECIALITY.': </td><td>'.$result['doc_speciality_name'].'</td></tr>';
+		// $output .= '<tr><td>'._DOCTOR_SPECIALITY.': </td><td>'.$result['doc_speciality_name'].'</td></tr>';
         $output .= '<tr><td>' . _PROVIDER_SERVICES . ': </td><td>';
         foreach ($services as $s) {
             $output .= $s -> getName() . "<br />";
@@ -2857,6 +2853,17 @@ class Appointments extends MicroGrid {
 
 	
 	public static function getAppointmentById($id) {
+		$sql = "SELECT `a`.`id`, `a`.`appointment_number`, `a`.`appointment_description`,
+						`a`.`status`, `a`.`appointment_date`, `a`.`appointment_time`, 
+						`a`.`visit_duration`, `a`.`pets`,
+						`a`.`patient_id`,
+						`a`.`service_list`, `a`.`package_list`,
+						`p`.`first_name`, `p`.`last_name`, `p`.`phone`, `p`.`email`
+					FROM `meda_appointments` AS `a`
+					LEFT JOIN `meda_patients` AS `p` ON `a`.`patient_id`=`p`.`id`
+					WHERE `a`.`id`=$id";
+		
+/*
 		$sql = "SELECT `meda_appointments`.`id`, 
 							`appointment_number`, 
 							`appointment_description`, 
@@ -2868,25 +2875,35 @@ class Appointments extends MicroGrid {
 							`last_name`,
 							`status`,
 							`color`,
+							`pets`,
 							`service_list`,
 							`package_list`
 						FROM `meda_appointments`, `meda_patients` 
 						WHERE `meda_appointments`.`id`=$id
 							AND `patient_id`=`meda_patients`.`id`";
+*/
 		return database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
 	}
 	
 	public static function getAllAppointmentsByLoggedProvider($start_date = '', $end_date = '') {
 		$doc_id = Session::Get("session_account_id");
-		$sql = "SELECT `meda_appointments`.`id`,
-						`appointment_date`, 
-						`appointment_time`, 
-						`visit_duration`,
-						`first_name`, 
-						`last_name`,
-						`color`
-				FROM `meda_appointments`, `meda_patients` 
-				WHERE `patient_id`=`meda_patients`.`id` AND `doctor_id`=$doc_id AND `status`!=2";
+
+		$sql = "SELECT `a`.`id`, `a`.`appointment_date`, `a`.`appointment_time`,
+						`a`.`visit_duration`, `p`.`first_name`, `p`.`last_name`,
+						`a`.`color`, `a`.`pets`
+					FROM `meda_appointments` AS `a`
+					LEFT JOIN `meda_patients` AS `p` ON `a`.`patient_id`=`p`.`id`
+					WHERE `a`.`doctor_id`=$doc_id AND `a`.`status`!= 2";
+		// $sql = "SELECT `meda_appointments`.`id`,
+		// 				`appointment_date`, 
+		// 				`appointment_time`, 
+		// 				`visit_duration`,
+		// 				`first_name`, 
+		// 				`last_name`,
+		// 				`color`,
+		// 				`pets`
+		// 		FROM `meda_appointments`, `meda_patients` 
+		// 		WHERE `patient_id`=`meda_patients`.`id` AND `doctor_id`=$doc_id AND `status`!=2";
 		if ($start_date != '') { $sql .= " AND DATE(`appointment_date`) >= DATE('$start_date')"; }
 		if ($end_date != '') { $sql .= " AND DATE(`appointment_date`) <= DATE('$end_date')"; }
 		return database_query($sql, DATA_AND_ROWS, ALL_ROWS);

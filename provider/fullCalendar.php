@@ -10,7 +10,7 @@ if($objLogin->IsLoggedInAsDoctor()){
     <li><a data-toggle="tab" href="#calendar_schedules">Schedules</a></li>
     <li><a data-toggle="tab" href="#calendar_timeoffs">Time Offs</a></li>
     <li><a data-toggle="tab" href="#calendar_appointments_list">Appointments</a></li>
-    <li><a data-toggle="modal" href="#cal_addModal">Add new Appointment</a></li>
+    <li><a data-toggle="modal" href="#cal_addModal" data-role="new_appointment">Add new Appointment</a></li>
 
 </ul>
 <div class="tab-content">
@@ -499,6 +499,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         </select>
 									</td>
 								</tr>
+<!--
 								<tr>
 									<td width="25%" align="left">
 										<label for="color">Color <span class="required">*</span>:</label>
@@ -507,6 +508,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<input type="text" class="form-control input-sm" name="color" data-role="spectrum" />
 									</td>
 								</tr>
+-->
 							</tbody>
 						</table>
 					</fieldset>
