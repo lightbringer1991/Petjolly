@@ -17,15 +17,12 @@
  */
  function clearEventForm(form) {
 	$(form).find('button[type="submit"]').html("Add Event");
-	$(form).find('input').val('');
+	$(form).find('input[type="text"]').val('');
 	$(form).find("input[name='form_type']").val('add');
 	$(form).find("input[name='color']").spectrum('set', '#0000FF');
 	
 	$(form).find("textarea").each(function() { $(this).val(""); });
-	$(form).find('select[multiple="multiple"] option:selected').each(function() {
-		$(this).prop('selected', false);
-	});	 
-	$(form).find('select[multiple="multiple"]').multiselect('refresh');
+    $(form).find('select[multiple="multiple"]').multiselect('uncheckAll');
 }
 
 function getTimeOff(url, start, end) {
@@ -280,7 +277,7 @@ function createCalendar(elementList, calendarOptions) {
                 eventData = JSON.parse(data);
                 $(elementOps.modalEditSelector).find('h4.modal-title').html("Edit Appointment");
                 $(elementOps.modalEditSelector).find("input[name='appointment_id']").val(eventData.id);
-                $(elementOps.modalEditSelector).find("input[name='appointment_customer_id']").val(eventData.customer_id);
+                $(elementOps.modalEditSelector).find("input[name='appointment_customer_id']").val(eventData.patient_id);
                 $(elementOps.modalEditSelector).find("input[name='customer_name']").val(eventData.first_name + " " + eventData.last_name);
                 $(elementOps.modalEditSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
                 $(elementOps.modalEditSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
@@ -304,12 +301,12 @@ function createCalendar(elementList, calendarOptions) {
     }
 
     calendar.openCreate = function() {
+        clearEventForm(elementOps.modalCreateSelector);
+
         var duration = (calendar.end - calendar.start)/60000;
         var startDate = calendar.start.format("YYYY-MM-DD");
         var startTime = calendar.start.format("HH:mm");
         $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create new Appointment");
-        $(elementOps.modalCreateSelector).find("input").val("");
-        $(elementOps.modalCreateSelector).find("select").val("");
 
         $(elementOps.modalCreateSelector).find("select[name='duration']").val(duration);
         $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(startDate);
@@ -319,8 +316,7 @@ function createCalendar(elementList, calendarOptions) {
     }
 
     $('a[data-role="new_appointment"]').on('click', function() {
-        $(elementOps.modalCreateSelector).find("input").val("");
-        $(elementOps.modalCreateSelector).find("select").val("");        
+        clearEventForm(elementOps.modalCreateSelector);
     });
 
     // change status to paid/checkin in View Appointment dialog
@@ -386,11 +382,14 @@ function createCalendar(elementList, calendarOptions) {
                 alert("Invalid customer");
                 return false;
             }
-
-            if (!$(elementOps.modalCreateSelector).find('#form-appointment').valid()) { return false; }
+            //check if any service or package is selected
+            if ($(elementOps.modalCreateSelector).find("select[name='service_list[]']").multiselect('getChecked').length == 0) {
+                alert("Please select at least 1 service or 1 package");
+                return false;
+            }
 
             var data = $(elementOps.modalCreateSelector).find("form").serializeArray();
-            data.color = $(elementOps.modalCreateSelector).find("input[name='color']").val();
+            // data.color = $(elementOps.modalCreateSelector).find("input[name='color']").val();
             $.ajax({
                 type: 'POST',
                 url: elementOps.ajaxEventSave,

@@ -408,7 +408,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<label for="customer_name">Customer/Pet Name <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
-										<input name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+										<input type="text" name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
 									</td>
 								</tr>
 								<tr>
@@ -421,7 +421,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         <label for="customer_phone">Phone:</label>
                                     </td>
                                     <td style="text-align:left;padding-left:6px;">
-                                        <input name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                        <input type="text" name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -429,7 +429,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         <label for="customer_email">Email:</label>
                                     </td>
                                     <td style="text-align:left;padding-left:6px;">
-                                        <input name="customer_email" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                        <input type="text" name="customer_email" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -437,7 +437,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         <label for="customer_pets">Pets:</label>
                                     </td>
                                     <td style="text-align:left;padding-left:6px;">
-                                        <input name="customer_pets" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                        <input type="text" name="customer_pets" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
                                     </td>
                                 </tr>
 								<tr>
@@ -470,7 +470,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<label for="appointment_date">Start date <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
-										<input name="appointment_date" id="datepicker" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+										<input type="text" name="appointment_date" id="datepicker" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
 									</td>
 								</tr>
 								<tr>
@@ -478,7 +478,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 										<label for="appointment_time">Start time <span class="required">*</span>:</label>
 									</td>
 									<td style="text-align:left;padding-left:6px;">
-										<input name="appointment_time" placeholder="HH:MM" class="mgrid_text" dir="ltr" id="tp1" maxlength="70" value='' style="width:250px;" />
+										<input type="text" name="appointment_time" placeholder="HH:MM" class="mgrid_text" dir="ltr" id="tp1" maxlength="70" value='' style="width:250px;" />
 									</td>
 								</tr>
 								<tr>
