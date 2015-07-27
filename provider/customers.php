@@ -48,7 +48,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 
 ?>
 <button class="btn btn-warning pull-right" style="margin-bottom: 7px;" type="button" data-role='btn-customer-create'>New Customer</button>
-<table class="table table-hover table-striped table-bordered">
+<table data-id="customer_table" class="table table-hover table-striped table-bordered">
 	<thead class="center">
 		<th class="c_table">First name</th>
 		<th class="c_table">Last name</th>
@@ -127,7 +127,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<label for="address">Address <span class="required">*</span>:</label>
+									<label for="address">Address:</label>
 								</td>
 								<td style="text-align:left;padding-left:6px;">
 									<input name="address" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:210px;">
@@ -135,7 +135,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<label for="city">City <span class="required">*</span>:</label>
+									<label for="city">City:</label>
 								</td>
 								<td style="text-align:left;padding-left:6px;">
 									<input name="city" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:210px;">
@@ -143,7 +143,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<label for="state">State <span class="required">*</span>:</label>
+									<label for="state">State:</label>
 								</td>
 								<td style="text-align:left;padding-left:6px;">
 									<select name="state" style="width:210px;">
@@ -203,7 +203,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<label for="zipcode">Zipcode <span class="required">*</span>:</label>
+									<label for="zipcode">Zipcode:</label>
 								</td>
 								<td style="text-align:left;padding-left:6px;">
 									<input name="zipcode" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:210px;">
@@ -219,7 +219,7 @@ if($objLogin->IsLoggedInAsDoctor()){
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<label for="email">Email <span class="required">*</span>:</label>
+									<label for="email">Email:</label>
 								</td>
 								<td style="text-align:left;padding-left:6px;">
 									<input name="email" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:210px;">
@@ -380,3 +380,9 @@ if($objLogin->IsLoggedInAsDoctor()){
 	}
 }
 ?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$("[data-id='customer_table']").DataTable();
+});
+</script>

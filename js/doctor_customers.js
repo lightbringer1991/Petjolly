@@ -41,11 +41,13 @@ $("form#form-customer").validate({
 			phoneUS: true,
 			phoneExist: true
 		},
+/*
 		email: {
 			required: true,
 			email: true,
 			emailExist: true
 		}
+*/
 	},
 	messages: {
 		fname: "First name cannot be blank",
@@ -59,11 +61,13 @@ $("form#form-customer").validate({
 			phoneUS: "Please enter a valid US phone number",
 			phoneExist: "Phone number already exists"
 		},
+/*
 		email: {
 			required: "You must provide an email address",
 			phoneUS: "Please enter a valid email address",
 			emailExist: "Email already exists"
 		}
+*/
 	}
 });
 

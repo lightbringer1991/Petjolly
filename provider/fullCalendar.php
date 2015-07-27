@@ -289,7 +289,8 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                 <div class="col-md-2" data-role="appointment-status">
                     <form data-id="form-status">
                         <input name="status" type="radio" value="3" /> Check In <br />
-                        <input name="status" type="radio" value="4" /> Paid
+                        <input name="status" type="radio" value="4" /> Paid <br />
+                        <input name="status" type="radio" value="5" /> No Show <br />
                         <input name="status" type="radio" value="0" style="display: none;" />
                     </form>
                 </div>

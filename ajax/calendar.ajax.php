@@ -12,7 +12,8 @@ $doc_id = Session::Get("session_account_id");
 $statusColor = array(
     1 => '#0000ff',
     3 => '#FF8000',
-    4 => '#00FF00'
+    4 => '#00FF00',
+    5 => '#FF0000'
 );
 
 switch ($option) {
@@ -46,7 +47,8 @@ switch ($option) {
                                     '<b>Duration: </b>' . $event[0]['visit_duration'] . ' minutes<br />' .
                                     '<b>Services: </b><br />' . $serviceList . '<br />' .
                                     '<b>Packages: </b><br />' . $packageList . '<br />',
-                'status' => (($event[0]['status'] == 3) || ($event[0]['status'] == 4)) ? $event[0]['status'] : 0
+                'status' => in_array($event[0]['status'], array(3, 4, 5)) ? $event[0]['status'] : 0
+
             );
             echo json_encode($output);
 		}

@@ -36,8 +36,8 @@ span.action_icon {
 					<thead>
 						<th>Name</th>
 						<th>Description</th>
-						<th>Duration</th>
-						<th>Price</th>
+						<th>Duration (min)</th>
+						<th>Price ($)</th>
                         <th>Active</th>
 						<th>Action</th>
 					</thead>
@@ -133,14 +133,14 @@ span.action_icon {
 					<th>Name</th>
 					<th>Description</th>
 					<th>Services</th>
-					<th>Duration</th>
-					<th>Price</th>
+					<th>Duration (min)</th>
+					<th>Price ($)</th>
                     <th>Active</th>
 					<th>Action</th>
 				</thead>
 				<tbody>
 <?php
-	$packageAction = "<a href='#' data-role='edit_package' data-toggle='tooltip' data-placement='top' title='Edit Pacjage'><img src='images/microgrid_icons/edit.gif' /></a>
+	$packageAction = "<a href='#' data-role='edit_package' data-toggle='tooltip' data-placement='top' title='Edit Package'><img src='images/microgrid_icons/edit.gif' /></a>
 					  <a href='#' data-role='delete_package' data-toggle='tooltip' data-placement='top' title='Delete Package'><img src='images/microgrid_icons/delete.gif' /></a>";
 	foreach ($packages as $p) {
 		// get service list

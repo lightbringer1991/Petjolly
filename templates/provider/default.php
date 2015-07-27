@@ -71,6 +71,9 @@
 	<!-- bootstrap-multiselect -->
 	<link href="custom_libraries/bootstrap-multiselect-master/bootstrap-multiselect.css" rel="stylesheet" />
 
+  <!-- datatables -->
+  <link href="custom_libraries/DataTables-1.10.7/media/css/jquery.dataTables.min.css" rel="stylesheet" />
+
 	<!-- jquery-ui-multiselect-widget -->
 	<link rel="stylesheet" type="text/css" href="custom_libraries/jquery-ui-multiselect-widget/jquery.multiselect.css" />
 
@@ -249,6 +252,10 @@
 	<script type="text/javascript" src="custom_libraries/jquery-ui-multiselect-widget/src/jquery.multiselect.js"></script>
 	<!-- END jquery UI Multiselect -->
 	
+  <!-- BEGIN datatables -->
+  <script type="text/javascript" src="custom_libraries/DataTables-1.10.7/media/js/jquery.dataTables.min.js"></script>
+  <!-- END datatables -->
+
 	<script type="text/javascript" src="assets/frontend/layout/scripts/sceditor/jquery.sceditor.bbcode.min.js"></script>
 	
     <script src="assets/frontend/layout/scripts/layout.js" type="text/javascript"></script>
