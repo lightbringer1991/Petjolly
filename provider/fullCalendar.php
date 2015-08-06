@@ -4,6 +4,7 @@ defined('APPHP_EXEC') or die('Restricted Access');
 
 if($objLogin->IsLoggedInAsDoctor()){
     draw_title_bar(prepare_breadcrumbs(array(_CALENDAR=>'')));
+    
 ?>
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#calendar_appointments">Calendar</a></li>
@@ -416,6 +417,9 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 									<td>
 										<a href="#cal_add_customer" data-toggle="modal" style="color: blue">Add a new customer</a>
 									</td>
+                                    <td>
+                                        <a href="#appointment_history" data-toggle="modal">Appointment History</a>
+                                    </td>
 								</tr>
                                 <tr>
                                     <td width="25%" align="left">
@@ -500,16 +504,14 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         </select>
 									</td>
 								</tr>
-<!--
-								<tr>
-									<td width="25%" align="left">
-										<label for="color">Color <span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-										<input type="text" class="form-control input-sm" name="color" data-role="spectrum" />
-									</td>
-								</tr>
--->
+                                <tr>
+                                    <td align="left"> 
+                                        <label for="notes">Notes:</label>
+                                    </td>
+                                    <td>
+                                        <textarea name="notes" class="mgrid_text" style="width:250px;"></textarea>
+                                    </td>
+                                </tr>
 							</tbody>
 						</table>
 					</fieldset>
@@ -533,6 +535,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 		<div class="modal-body">
 			<form id='form-customer'>
 				<fieldset>
+                    <legend>Customer details</legend>
 					<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
 						<tbody>
 							<tr>
@@ -570,6 +573,37 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 						</tbody>
 					</table>
 				</fieldset>
+                <fieldset>
+                    <legend>Pet details</legend>
+                    <table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td width="25%" align="left">
+                                    <label for="pet_name">Pet Name <span class="required">*</span>:</label>
+                                </td>
+                                <td style="text-align:left;padding-left:6px;">
+                                    <input name="pet_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" align="left">
+                                    <label for="pet_type">Type <span class="required">*</span>:</label>
+                                </td>
+                                <td style="text-align:left;padding-left:6px;">
+                                    <input name="pet_type" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%" align="left">
+                                    <label for="pet_breed">Breed <span class="required">*</span>:</label>
+                                </td>
+                                <td style="text-align:left;padding-left:6px;">
+                                    <input name="pet_breed" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </fieldset>
 			</form>
 		</div>
 		<div class="modal-footer">
@@ -579,6 +613,20 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
 		</div>
 		</div>
 	</div>
+
+    <div id="appointment_history" class="modal fade">
+        <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Appointment history</h4>
+        </div>
+        <div class="modal-body">
+
+        </div>
+        </div>
+        </div>
+    </div>
 
 <script src="ajaxCalendar/js/custom.js"></script>
 <script type="text/javascript">

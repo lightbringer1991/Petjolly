@@ -191,6 +191,7 @@ switch ($option) {
         $app_time = isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '';
         $duration = isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '';
         $pets = isset($_POST['customer_pets']) ? mysqli_real_escape_string($database_connection, $_POST['customer_pets']) : '';
+        $notes = isset($_POST['notes']) ? mysqli_real_escape_string($database_connection, $_POST['notes']) : '';
        // $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
 
         $service_list = array();
@@ -209,7 +210,8 @@ switch ($option) {
             'service_list' => implode(',', $service_list),
             'package_list' => implode(',', $package_list),
             'color' => $statusColor[1],
-            'pets' => $pets
+            'pets' => $pets,
+            'doctor_notes' => $notes
         ));
         break;
     case "deleteEvent":
@@ -285,6 +287,25 @@ switch ($option) {
 
         $sql = "INSERT INTO `providers_customers`(`provider_id`, `customer_id`) VALUES($doc_id, $id)";
         database_void_query($sql);
+
+        $petData = array(
+            'name' => isset($_POST['pet_name']) ? mysqli_real_escape_string($database_connection, $_POST['pet_name']) : '',
+            'type' => isset($_POST['pet_type']) ? mysqli_real_escape_string($database_connection, $_POST['pet_type']) : '',
+            'breed' => isset($_POST['pet_breed']) ? mysqli_real_escape_string($database_connection, $_POST['pet_breed']) : ''
+        );
+
+        $petType = PetTypes::getPetTypesByCondition('name', $petData['type']);
+        $newType = null;
+        // if pet type cannot be found -> add new pet type
+        if (empty($petType)) {
+            $newType = new PetTypes();
+            $newType -> setName($petData['type']);
+            $newType -> saveType();
+        } else {
+            $newType = $petType[0];
+        }
+        $newPet = new Pets(-1, $id, $petData['name'], $newType -> getId(), $petData['breed']);
+        $newPet -> add();
 
         echo $id;
 

@@ -25,6 +25,18 @@ switch ($option) {
 									WHERE `patient_id`=$id AND `patient_id` = `meda_patients`.`id` AND `doctor_id`=" . Session::Get("session_account_id"));
 		echo json_encode($results);
 		break;
+    // get the most 3 recent appointments
+    case "getAppointmentHistory":
+        if ($id != '') {
+            $query = "SELECT `id`, `appointment_number`, `appointment_date`, `appointment_time`, `visit_duration`, `doctor_notes` 
+                        FROM `meda_appointments` 
+                        WHERE `patient_id`=$id 
+                        ORDER BY `id` DESC 
+                        LIMIT 3";
+            $result = database_query($query);
+            echo json_encode($result);
+        }
+        break;
 	case "getSummaryData":
 		$results = database_query("SELECT YEAR(`appointment_date`) AS `year`, MONTH(`appointment_date`) AS `month`, COUNT(*) AS `appointments` 
 									FROM `meda_appointments`

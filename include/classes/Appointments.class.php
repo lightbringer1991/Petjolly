@@ -1776,7 +1776,7 @@ class Appointments extends MicroGrid {
         $package_list = isset($params['package_list']) ? $params['package_list'] : '';
         $color = isset($params['color']) ? $params['color'] : '';
         $pets = isset($params['pets']) ? $params['pets'] : '';
-
+        $notes = isset($params['doctor_notes']) ? $params['doctor_notes'] : '';
 
 		$sql = 'SELECT id, appointment_number
 				FROM '.TABLE_APPOINTMENTS.'
@@ -1931,7 +1931,7 @@ class Appointments extends MicroGrid {
 					\''.$start_time.':00\',
 					'.(int)$duration.',
 					'.(int)$visit_price.',
-					\'\',
+					\'' . $notes . '\',
 					\'\',
 					'.(int)$for_whom.',
 

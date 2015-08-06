@@ -20,12 +20,11 @@ class PetTypes {
 	public function saveType() {
 		if ($this -> id == -1) {
 			$types = PetTypes::getPetTypesByCondition('name', $this -> name);
-			echo var_dump($types);
 			if (count($types) == 0) {
 				$sql = "INSERT INTO `meda_pet_types`(`name`) VALUES ('" . $this -> name . "')";
 				database_void_query($sql);
 				$aType = PetTypes::getPetTypesByCondition('name', $this -> name);
-				$this -> id = $aType[0]['id'];
+				$this -> id = $aType[0] -> getId();
 				return true;
 			}
 		}

@@ -18,10 +18,11 @@
  function clearEventForm(form) {
 	$(form).find('button[type="submit"]').html("Add Event");
 	$(form).find('input[type="text"]').val('');
+    $(form).find('input[type="hidden"]').val('');
 	$(form).find("input[name='form_type']").val('add');
 	$(form).find("input[name='color']").spectrum('set', '#0000FF');
 	
-	$(form).find("textarea").each(function() { $(this).val(""); });
+	$(form).find("textarea").val("");
     $(form).find('select[multiple="multiple"]').multiselect('uncheckAll');
 }
 
@@ -55,6 +56,7 @@ function createCalendar(elementList, calendarOptions) {
 		ajaxEventExport: 'includes/cal_export.php',
 		ajaxRepeatCheck: 'includes/cal_check_rep_events.php',
 		ajaxRetrieveDescription: 'ajax/calendar.ajax.php?option=eventDescription',
+        ajaxRetrieveHistory: 'ajax/appointments.ajax.php',
 		ajaxImport: 'importer.php',
         ajaxCustomerAutocomplete: 'ajax/calendar.ajax.php?option=customerAutocomplete',
         ajaxAddCustomer: 'ajax/calendar.ajax.php?option=createCustomer',
@@ -66,6 +68,7 @@ function createCalendar(elementList, calendarOptions) {
 		modalPromptSelector: '#cal_prompt',
 		modalEditPromptSelector: '#cal_edit_prompt_save',
         modalCreateCustomerSelector: '#cal_add_customer',
+        modalViewHistorySelector: '#appointment_history',
         formAddEventSelector: 'form#add_event',
 		formFilterSelector: 'form#filter-category select',
 		formEditEventSelector: 'form#edit_event', // php version
@@ -167,7 +170,6 @@ function createCalendar(elementList, calendarOptions) {
                 alert("Cannot create event in the past");
                 $(elementOps.calendarSelector).fullCalendar('unselect');
             }
-
 		},
 		eventSources: [
             { url: elementOps.ajaxFetchEvent, allDayDefault: false },
@@ -229,7 +231,7 @@ function createCalendar(elementList, calendarOptions) {
             }
 		},
 		eventAfterRender: function(event, element, view) {
-			element.find('div.fc-title').html(event.title + " - " + event.pets);
+			element.find('div.fc-title').html(event.pets + " - " + event.title);
 		}
 	};
 	var ops = $.extend(defaultsOptions, calendarOptions);
@@ -282,7 +284,7 @@ function createCalendar(elementList, calendarOptions) {
                 $(elementOps.modalEditSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
                 $(elementOps.modalEditSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
                 $(elementOps.modalEditSelector).find("select[name='duration']").val(eventData.visit_duration);
-//                $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
+               // $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
                 $(elementOps.modalEditSelector).find("input[name='customer_phone']").val(eventData.phone);
                 $(elementOps.modalEditSelector).find("input[name='customer_email']").val(eventData.email);
                 $(elementOps.modalEditSelector).find("input[name='customer_pets']").val(eventData.pets);
@@ -375,6 +377,50 @@ function createCalendar(elementList, calendarOptions) {
         }
     });
 
+    // grab the most 3 recent appointments when user click on Appointment History link
+    $(elementOps.modalCreateSelector).on('click', "a[href='#appointment_history']", function() {
+        var customerID = $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val();
+        var customerName = $(elementOps.modalCreateSelector).find("input[name='customer_name']").val();
+        if (customerID == '') { return false; }
+        $(elementOps.modalViewHistorySelector).find('.modal-title').html('Appointment history for ' + customerName);
+
+        $.ajax({
+            type: 'POST',
+            url: elementOps.ajaxRetrieveHistory,
+            data: { 'id': customerID, 'option': 'getAppointmentHistory' },
+            success: function(data) {
+                var jsonData = JSON.parse(data);
+                var output = "<table class='table table-hover table-striped table-bordered'>" + 
+                                "<thead>" + 
+                                    "<th class='c_table'>Appointment Number</th>" + 
+                                    "<th class='c_table'>Date/Time</th>" + 
+                                    "<th class='c_table'>Duration (minutes)</th>" + 
+                                    "<th class='c_table'>Notes</th>" + 
+                                "</thead>" + 
+                                "<tbody>";
+                if (jsonData.length == 0) {
+                    output +=   "<tr>" + 
+                                "<td colspan='4'>No appointment recorded</td>" + 
+                                "</tr>";
+                }
+                else {
+                    for(var i = 0; i < jsonData.length; i++) {
+                        console.log(jsonData[i]);
+                        output +=   "<tr data-id='" + jsonData[i].id + "'>" + 
+                                        "<td>" + jsonData[i].appointment_number + "</td>" + 
+                                        "<td>" + jsonData[i].appointment_date + " " + jsonData[i].appointment_time + "</td>" + 
+                                        "<td>" + jsonData[i].visit_duration + "</td>" + 
+                                        "<td>" + jsonData[i].doctor_notes + "</td>" + 
+                                    "</tr>";
+                    }               
+                }
+                output += "</tbody></table>";
+
+                $(elementOps.modalViewHistorySelector).find('.modal-body').html(output);
+            }
+        });
+    });
+
     // submit new event
     $(elementOps.modalCreateSelector).find(elementOps.btnCreateSubmitSelector).on('click', function() {
         if ($(elementOps.modalCreateSelector).find("input[name='appointment_id']").val() == '') {
@@ -408,6 +454,9 @@ function createCalendar(elementList, calendarOptions) {
         var data = $(elementOps.modalCreateCustomerSelector).find("form").serialize();
         var fname = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_fname']").val();
         var lname = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_lname']").val();
+        var phone = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_phone']").val();
+        var pet_name = $(elementOps.modalCreateCustomerSelector).find("input[name='pet_name']").val();
+
         $.ajax({
             type: 'POST',
             url: elementOps.ajaxAddCustomer,
@@ -415,6 +464,8 @@ function createCalendar(elementList, calendarOptions) {
             success: function(response) {
                 $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val(response);
                 $(elementOps.modalCreateSelector).find("input[name='customer_name']").val(fname + " " + lname);
+                $(elementOps.modalCreateSelector).find("input[name='customer_phone']").val(phone);
+                $(elementOps.modalCreateSelector).find("input[name='customer_pets']").val(pet_name);
                 $(elementOps.modalCreateCustomerSelector).modal('hide');
             }
         });

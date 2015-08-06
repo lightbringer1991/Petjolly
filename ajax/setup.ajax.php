@@ -47,12 +47,6 @@ switch ($step) {
 		$xml = new SimpleXMLElement($page);
 		$new_address = $address ."==". $city ."==". $state ."==". $zipcode;
 		
-/*		
-		$sql = "INSERT INTO " . TABLE_DOCTOR_ADDRESSES . 
-			"(`doctor_id`, `address`, `latitude`, `longitude`, `access_level`, `priority_order`, `is_default`, `is_active` )
-			VALUES ( '$doc_id', '$new_address', '$latitude', '$longitude', 'public', 0, 0, 1);"; 
-		database_void_query($sql);
-*/		
 		// get business hours
 		$monOp = isset($_REQUEST['monday_start']) ? mysqli_real_escape_string($database_connection, $_REQUEST['monday_start']) : '';
 		$monCl = isset($_REQUEST['monday_end']) ? mysqli_real_escape_string($database_connection, $_REQUEST['monday_end']) : '';
