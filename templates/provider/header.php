@@ -62,6 +62,17 @@
         <section class="sidebar">
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu">
+                <li>
+                    <a href="index.php?provider=fullCalendar">
+                        <i class="fa fa-calendar"></i>
+                        <span>CALENDAR</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?provider=customers&mode=view">
+                        <i class="fa fa-user"></i> <span>CUSTOMERS</span>
+                    </a>
+                </li>
                 <li class="treeview">
                     <a href="index.php?provider=home">
                         <i class="fa fa-dashboard"></i> <span>DASHBOARD</span></i>
@@ -74,14 +85,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="index.php?provider=fullCalendar">
-                        <i class="fa fa-calendar"></i>
-                        <span>CALENDAR</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?provider=customers&mode=view">
-                        <i class="fa fa-user"></i> <span>CUSTOMERS</span>
+                    <a href="index.php?provider=setup">
+                        <i class="fa fa-calendar"></i> <span>BUSINESS SETUP</span>
                     </a>
                 </li>
                 <li>
@@ -93,11 +98,6 @@
                 <li>
                     <a href="index.php?provider=membership_plans">
                         <i class="fa fa-edit"></i> <span>MEMBERSHIP INFO</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?provider=setup">
-                        <i class="fa fa-calendar"></i> <span>BUSINESS SETUP</span>
                     </a>
                 </li>
             </ul>

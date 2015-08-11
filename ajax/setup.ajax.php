@@ -32,8 +32,6 @@ switch ($step) {
 		// get longitude and lattitude
 		$business_name = isset($_REQUEST['business_name']) ? mysqli_real_escape_string($database_connection, $_REQUEST['business_name']) : '';
 		$description = isset($_REQUEST['description']) ? mysqli_real_escape_string($database_connection, $_REQUEST['description']) : '';
-		$ammenties = isset($_REQUEST['ammenties']) ? $_REQUEST['ammenties'] : array();
-        $specialities = isset($_REQUEST['specialities']) ? $_REQUEST['specialities'] : array();
 		$address = isset($_REQUEST['address']) ? mysqli_real_escape_string($database_connection, $_REQUEST['address']) : '';
 		$city = isset($_REQUEST['city']) ? mysqli_real_escape_string($database_connection, $_REQUEST['city']) : '';
 		$state = isset($_REQUEST['state']) ? mysqli_real_escape_string($database_connection, $_REQUEST['state']) : '';
@@ -89,31 +87,19 @@ switch ($step) {
 			WHERE id=$doc_id";
 		database_void_query($sql);
 		
-		// insert ammenties list
-		// remove current ammenties list
-		$sql = "DELETE FROM `providers_ammenties` WHERE `provider_id`=$doc_id";
-		database_void_query($sql);
-		
-		// insert new ammenties list
-		foreach ($ammenties as $a) {
-			$sql = sprintf("INSERT INTO `providers_ammenties`(`provider_id`, `ammenty_id`) VALUES ('%s', '%s')", $doc_id, $a);
-			database_void_query($sql);
-		}
-
-        // insert specialities list
-        // remove current specialities list
-        $sql = "DELETE FROM " . TABLE_DOCTOR_SPECIALITIES . " WHERE `doctor_id`=$doc_id";
-        database_void_query($sql);
-
-        // insert new specialities list
-        foreach ($specialities as $s) {
-            $sql = sprintf("INSERT INTO `" . TABLE_DOCTOR_SPECIALITIES . "`(`doctor_id`, `speciality_id`) VALUES ('%s', '%s')", $doc_id, $s);
-            database_void_query($sql);
-        }
-
 		echo "1";
 		break;
-	case 2:
+	case 2: 
+		$amenities = isset($_REQUEST['amenities']) ? mysqli_real_escape_string($database_connection, $_REQUEST['amenities']) : '';
+		$specialties = isset($_REQUEST['specialties']) ? mysqli_real_escape_string($database_connection, $_REQUEST['specialties']) : '';
+		$sql = "UPDATE " . TABLE_DOCTORS . " SET
+					amenities='$amenities',
+					specialties='$specialties'
+				WHERE id=$doc_id";
+		database_void_query($sql);
+		echo "1";
+		break;
+	case 3:
         $list_storefeatured = isset($_REQUEST['storerfeatured']) ? mysqli_real_escape_string($database_connection, $_REQUEST['storerfeatured']) : '';
 		$phone = isset($_REQUEST['phone']) ? mysqli_real_escape_string($database_connection, $_REQUEST['phone']) : '';
 		$mobile_number = isset($_REQUEST['mobile']) ? mysqli_real_escape_string($database_connection, $_REQUEST['mobile']) : '';

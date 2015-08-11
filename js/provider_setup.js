@@ -67,16 +67,29 @@ $("form#form-setupAddress").on('submit', function(e) {
 	}, 4000);
 });
 
-$("form#form-setupSocial").on('submit', function(e) {
+$("form#form-setupServices").on('submit', function(e) {
 	e.preventDefault();
 	var data = $(this).serialize() + "&step=2";
+	$.ajax({
+		type: 'POST',
+		url: 'ajax/setup.ajax.php',
+		data: data,
+		success: function() {
+			window.location.href = "index.php?provider=setup&step=3";
+		}
+	});
+});
+
+$("form#form-setupSocial").on('submit', function(e) {
+	e.preventDefault();
+	var data = $(this).serialize() + "&step=3";
     if ($(this).valid()) {
         $.ajax({
             type: "POST",
             url: 'ajax/setup.ajax.php',
             data: data,
             success: function() {
-                window.location.href = "index.php?provider=setup&step=3";
+                window.location.href = "index.php?provider=setup&step=4";
             }
         });
     }

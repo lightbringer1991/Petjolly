@@ -9,9 +9,6 @@
 		$hourOptions .= "<option value='$h'>$h</option>";
 	}
 	
-	$allAmmenties = Ammenties::getAllAmmenties();
-    $allSpecialities = Specialities::GetAllActive();
-//    echo var_dump($allSpecialities);
 ?>
 
 <div id="setup_step1" class="steps">
@@ -40,38 +37,6 @@
 							<textarea name="description" class="mgrid_text" style="width:210px;"><?php echo $doctorInfo[0]['popupdesc']; ?></textarea>
 						</td>
 					</tr>
-					<tr>
-						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
-							<label for="ammenties">Ammenties</label>
-							<span class="required">*</span>
-							:
-						</td>
-						<td style="text-align:left;padding-left:6px;">
-							<select multiple="multiple" name="ammenties[]" size="5">
-<?php
-foreach ($allAmmenties as $a) {
-	echo "<option value='" . $a -> getId() . "'>" . $a -> getAmmenty() . "</option>";
-}
-?>
-							</select>
-						</td>
-					</tr>
-                    <tr>
-                        <td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
-                            <label for="specialities">Specialities</label>
-                            <span class="required">*</span>
-                            :
-                        </td>
-                        <td style="text-align:left;padding-left:6px;">
-                            <select multiple="multiple" name="specialities[]" size="5">
-<?php
-foreach ($allSpecialities[0] as $a) {
-    echo "<option value='" . $a['id'] . "'>" . $a['name'] . "</option>";
-}
-?>
-                            </select>
-                        </td>
-                    </tr>
 				</tbody>
 			</table>
 		</fieldset>
@@ -309,7 +274,7 @@ $(document).ready(function() {
 	$(setupForm).find("select[name='ammenties[]']").multiselect();
     $(setupForm).find("select[name='specialities[]']").multiselect();
 <?php
-	foreach ($ammenties as $a) {
+	foreach ($amenities as $a) {
 ?>
 	$(setupForm).find("select[name='ammenties[]']").multiselect('widget').find(":checkbox[value='<?php echo $a -> getId(); ?>']").click();
 <?php

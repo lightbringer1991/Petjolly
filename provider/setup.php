@@ -81,15 +81,15 @@ input[type="checkbox"] {
 	</div>
 	
 	<div class="col-xs-3 smpl-step-step smpl-step-step2">
-		<div class="smpl-step-info text-center <?php if ($step >= 2) { echo "current"; } ?>">Social Information</div>
+		<div class="smpl-step-info text-center <?php if ($step >= 2) { echo "current"; } ?>">Services</div>
 	</div>
 
 	<div class="col-xs-3 smpl-step-step smpl-step-step3">          
-		<div class="smpl-step-info text-center <?php if ($step >= 3) { echo "current"; } ?>">Images Upload</div>
+		<div class="smpl-step-info text-center <?php if ($step >= 3) { echo "current"; } ?>">Social Information</div>
 	</div>
 
 	 <div class="col-xs-3 smpl-step-step smpl-step-step4">          
-		<div class="smpl-step-info text-center <?php if ($step >= 4) { echo "current"; } ?>">Confirmation Page</div>
+		<div class="smpl-step-info text-center <?php if ($step >= 4) { echo "current"; } ?>">Store Images</div>
 	</div>
 </div>
 <div style="clear:both"></div>
@@ -97,8 +97,6 @@ input[type="checkbox"] {
 <?php
 	$doctorInfo = Doctors::GetDoctorInfoById($objLogin -> GetLoggedID());
 	$address = DoctorAddresses::GetAddresses($objLogin -> GetLoggedID());
-	$ammenties = Ammenties::GetAmmenties($objLogin -> GetLoggedID());
-    $specialities = DoctorSpecialities::GetSpecialitiesByProviderId($objLogin -> GetLoggedID());
 //	echo var_dump($doctorInfo);
 //	echo var_dump($address);
 //	echo var_dump($ammenties);

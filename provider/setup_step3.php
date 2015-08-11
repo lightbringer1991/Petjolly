@@ -1,54 +1,125 @@
-<?php
-defined('APPHP_EXEC') or die('Restricted Access');
-if($objLogin->IsLoggedInAsDoctor()) {
-	$images = DoctorImages::GetImagesForDoctor($objLogin -> GetLoggedID());
-	$membershipInfo = Doctors::GetMembershipInfo($objLogin -> GetLoggedID());
-//	echo var_dump($images);
-//	echo var_dump($membershipInfo);
-?>
-
 <style type="text/css">
-img.provider_photo {
-	display: inline;
-	width: 160px;
-	height: 120px;
-	float: none;
-}
-
-.btn {
-	text-transform: none;
+img.icon {
+	margin: 0px 5px 0px 0px;
+	width: 15px;
+	height: 15px;
 }
 </style>
 
-<div class="steps" id="setup_step3">
-	<!--Photos-->
-		<div class="row">
-			<legend>Photo</legend>
-			<div class="col-md-4">
-				<p><b>Uploaded photo (maximum <?php echo $membershipInfo['images_count']; ?> photo(s))</b></p>
-<?php
-	foreach($images[0] as $img) {
-		echo "<div data-id='{$img['id']}'><img src='images/doctors/{$img['item_file']}' class='provider_photo' /> <button type='button' class='btn btn-danger' data-role='delete-image'>Delete</button></div>";
-	}
-?>
-			</div>
-			<div class="col-md-8">
-				<form action="" method="POST" id="form-uploadPhoto" enctype="multipart/form-data">
-                    <p>Upload an image</p>
-                    <input type="file" name="image_upload" />
-                    <div class="row buttons">
-                        <div data-role="alert-fileUpload"></div>
-                        <button class="btn btn-info" type="button" data-role="uploadImage">Upload</button>
-                    </div>
-				</form>
-            </div>
+<div class="steps"  id="setup_step3">
+	<form action="#" method="POST" id="form-setupSocial">
+		<fieldset style="padding:5px;margin-left:5px;margin-right:10px;">
+			<legend>Contact Information</legend>
+			<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="2" border="0">
+				<tbody>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="phone">
+								<span class="glyphicon glyphicon-phone-alt"></span>
+								Phone Number
+							</label>
+							<span class="required">*</span>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="phone" placeholder="0000000000" class="mgrid_text" dir="ltr" maxlength="70" value="<?php echo $doctorInfo[0]['phone']; ?>" style="width:210px;" />
+						</td>
+					</tr>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="mobile">
+								<span class="glyphicon glyphicon-phone"></span>
+								Mobile Number
+							</label>
+							<span class="required">*</span>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="mobile" placeholder="0000000000" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['list_mobile']; ?>" style="width:210px;" />
+						</td>
+					</tr>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="fax">
+								<span class="glyphicon glyphicon-print"></span>
+								Fax Number
+							</label>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="fax" placeholder="0000000000" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['fax']; ?>" style="width:210px;" />
+						</td>
+					</tr>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="list_website">
+								<span class="glyphicon glyphicon-globe"></span>
+								Website
+							</label>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="list_website" placeholder="http://" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['list_website']; ?>" style="width:210px;" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
+
+		<fieldset style="padding:5px;margin-left:5px;margin-right:10px;">
+			<legend>Social Accounts</legend>
+			<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="2" border="0">
+				<tbody>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="list_twitter" style="vertical-align: middle;">
+								<img class="icon" src="images/steps/twit.jpg" />
+								Twitter	
+							</label>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="list_twitter" placeholder="@username" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['list_twitter']; ?>" style="width:300px;" />
+						</td>
+					</tr>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="list_facebook" style="vertical-align: middle;">
+								<img class="icon" src="images/steps/fb.jpg" />
+								Facebook URL
+							</label>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="list_facebook" placeholder="http://" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['list_facebook']; ?>" style="width:300px;" />
+						</td>
+					</tr>
+					<tr>
+						<td width="25%" align="left" style="border-right: 0px dotted rgb(204, 204, 204);">
+							<label for="list_google" style="vertical-align: middle;">
+								<img class="icon" src="images/steps/google+.jpg" />
+								Google+ URL
+							</label>
+							:
+						</td>
+						<td style="text-align:left;padding-left:6px;">
+							<input type="text" name="list_google" placeholder="http://" class="mgrid_text" dir="ltr" maxlength="70" value="<?php  echo $doctorInfo[0]['list_google']; ?>" style="width:300px;" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</fieldset>
+		
+		<div class="row buttons pull-right">
+			<button class="btn btn-info" data-role="btn-previous" data-step="2">Previous</button>
+			<button class="btn btn-warning" type="submit">Next</button>
 		</div>
-	<div class="row buttons pull-right">
-		<button class="btn btn-info" data-role="btn-previous" data-step="2">Previous</button>
-		<button class="btn btn-warning" data-role="btn-next" type="button">Next</button>
-	</div>
+	</form>
 </div>
 
-<?php
-}
-?>
+<script type="text/javascript">
+$(document).ready(function() {
+//	var setupForm = $("form#form-setupSocial");
+//	$(setupForm).find("input[name='storerfeatured'][value='<?php //echo $doctorInfo[0]['storerfeatured']; ?>']").prop('checked', true);
+});
+</script>
