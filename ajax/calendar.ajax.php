@@ -20,8 +20,32 @@ switch ($option) {
 	case "eventDescription":
 		$id = isset($_POST['id']) ? mysqli_real_escape_string($database_connection, $_POST['id']) : '';
 		$event = Appointments::getAppointmentById($id);
+
 		if ($mode == 'getInfo') {
-			echo json_encode($event[0]);
+            $output = array(
+                'appointment_id' => $event[0]['id'],
+                'pet_id' => $event[0]['pet_id'],
+                'pet_name' => $event[0]['name'],
+                'customer_name' => $event[0]['first_name'] . " " . $event[0]['last_name'],
+                'customer_phone' => $event[0]['phone'],
+                'customer_phone_preference' => (int)$event[0]['phone_SMS'] == 1 ? 'sms' : 'phone',
+                'customer_email' => $event[0]['email'],
+                'alternate_name1' => $event[0]['alternate_name1'],
+                'alternate_phone1' => $event[0]['alternate_phone1'],
+                'alternate_phone1_preference' => (int)$event[0]['alternate_SMS1'] == 1 ? 'sms' : 'phone',
+                'alternate_name2' => $event[0]['alternate_name2'],
+                'alternate_phone2' => $event[0]['alternate_phone2'],
+                'alternate_phone2_preference' => (int)$event[0]['alternate_SMS2'] == 1 ? 'sms' : 'phone',
+                'customer_notes' => $event[0]['doctor_notes'],
+                'service_list' => $event[0]['service_list'],
+                'package_list' => $event[0]['package_list'],
+                'appointment_date' => $event[0]['appointment_date'],
+                'appointment_time' => $event[0]['appointment_time'],
+                'duration' => $event[0]['visit_duration'],
+                'pet_notes' => $event[0]['patient_notes']
+            );
+
+            echo json_encode($output);
 		} else {
             $services = explode(',', $event[0]['service_list']);
 
@@ -42,7 +66,7 @@ switch ($option) {
 
             $output = array(
                 'description' =>    '<b>Customer Name: </b>' . $event[0]['first_name'] . " " . $event[0]['last_name'] . "<br />" . 
-                                    '<b>Pet Name: </b>' . $event[0]['pets'] . "<br />" .
+                                    '<b>Pet Name: </b>' . $event[0]['name'] . "<br />" .
                                     '<b>Appointment Time: </b>' . $event[0]['appointment_date'] . " " . $event[0]['appointment_time'] . '<br />' .
                                     '<b>Duration: </b>' . $event[0]['visit_duration'] . ' minutes<br />' .
                                     '<b>Services: </b><br />' . $serviceList . '<br />' .
@@ -93,7 +117,7 @@ switch ($option) {
                 'start' => $startTimeStr,
                 'end' => $endTimeStr,
                 'color' => $e['color'],
-                'pets' => $e['pets']
+                'pets' => $e['name']
             );
 
             array_push($jsonArray, $anEvent);
@@ -129,89 +153,70 @@ switch ($option) {
         break;
     case "editEvent":
         $app_id = isset($_POST['appointment_id']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_id']) : '';
-        $cus_id = isset($_POST['appointment_customer_id']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_customer_id']) : '';
-        $service_package_list = isset($_POST['service_list']) ? $_POST['service_list'] : '';
-        $app_date = isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '';
-        $app_time = isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '';
-        $duration = isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '';
-        $pets = isset($_POST['customer_pets']) ? mysqli_real_escape_string($database_connection, $_POST['customer_pets']) : '';
-        // $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
 
         $service_list = array();
         $package_list = array();
+        $service_package_list = isset($_POST['service_list']) ? $_POST['service_list'] : '';
         foreach ($service_package_list as $sp) {
             if (substr($sp, 0, 1) == 'p') { array_push($package_list, substr($sp, 1)); }
             else { array_push($service_list, substr($sp, 1)); }
         }
-        $sql = sprintf("UPDATE `meda_appointments` SET
-                        `patient_id`='%s',
-                        `service_list`='%s',
-                        `package_list`='%s',
-                        `appointment_date`='%s',
-                        `appointment_time`='%s',
-                        `visit_duration`='%s',
-                        `pets`='%s'
-                        WHERE `id`='%s'",
-                        $cus_id,
-                        implode(',', $service_list),
-                        implode(',', $package_list),
-                        $app_date,
-                        $app_time,
-                        $duration,
-                        $pets,
-                        $app_id
-        );
-        echo $sql;
 
-        // $sql = sprintf("UPDATE `meda_appointments` SET
-        //                 `patient_id`='%s',
-        //                 `service_list`='%s',
-        //                 `package_list`='%s',
-        //                 `appointment_date`='%s',
-        //                 `appointment_time`='%s',
-        //                 `visit_duration`='%s',
-        //                 `color`='%s' 
-        //                 WHERE `id`='%s'",
-        //                 $cus_id,
-        //                 implode(',', $service_list),
-        //                 implode(',', $package_list),
-        //                 $app_date,
-        //                 $app_time,
-        //                 $duration,
-        //                 $color,
-        //                 $app_id
-        //      );
+        $fields = array(
+            'appointment_date'      => isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '',
+            'appointment_time'      => isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '',
+            'visit_duration'        => isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '',
+            'patient_id'            => isset($_POST['pet_id']) ? mysqli_real_escape_string($database_connection, $_POST['pet_id']) : 0,
+            'service_list'          => implode(',', $service_list),
+            'package_list'          => implode(',', $package_list),
+            'phone_SMS'             => (isset($_POST['customer_phone_preference']) && ($_POST['customer_phone_preference'] == 'sms')) ? 1 : 0,
+            'alternate_name1'       => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
+            'alternate_phone1'      => isset($_POST['alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone1']) : '',
+            'alternate_SMS1'        => (isset($_POST['alternate_phone1_preference']) && ($_POST['alternate_phone1_preference'] == 'sms')) ? 1 : 0,
+            'alternate_name2'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
+            'alternate_phone2'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
+            'alternate_SMS2'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
+            'doctor_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
+            'patient_notes'         => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
+        );
+
+        $sql = "UPDATE `meda_appointments` SET ";
+        foreach ($fields as $key => $value) {
+            $sql .= "`$key`='$value',";
+        }
+        $sql = rtrim($sql, ",");
+        $sql .= " WHERE `id`=$app_id";
 
         database_void_query($sql);
         break;
     case "createEvent":
-        $cus_id = isset($_POST['appointment_customer_id']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_customer_id']) : '';
-        $service_package_list = isset($_POST['service_list']) ? $_POST['service_list'] : '';
-        $app_date = isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '';
-        $app_time = isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '';
-        $duration = isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '';
-        $pets = isset($_POST['customer_pets']) ? mysqli_real_escape_string($database_connection, $_POST['customer_pets']) : '';
-        $notes = isset($_POST['notes']) ? mysqli_real_escape_string($database_connection, $_POST['notes']) : '';
-       // $color = isset($_POST['color']) ? mysqli_real_escape_string($database_connection, $_POST['color']) : '';
-
+        // get services and packages ids
         $service_list = array();
         $package_list = array();
+        $service_package_list = isset($_POST['service_list']) ? $_POST['service_list'] : '';
         foreach ($service_package_list as $sp) {
             if (substr($sp, 0, 1) == 'p') { array_push($package_list, substr($sp, 1)); }
             else { array_push($service_list, substr($sp, 1)); }
         }
 
         Appointments::DoAppointment(array(
-            'docid' => $doc_id,
-            'date' => $app_date,
-            'start_time' => $app_time,
-            'duration' => $duration,
-            'patient_id' => $cus_id,
-            'service_list' => implode(',', $service_list),
-            'package_list' => implode(',', $package_list),
-            'color' => $statusColor[1],
-            'pets' => $pets,
-            'doctor_notes' => $notes
+            'docid'                 => $doc_id,
+            'date'                  => isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '',
+            'start_time'            => isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '',
+            'duration'              => isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '',
+            'patient_id'            => isset($_POST['pet_id']) ? mysqli_real_escape_string($database_connection, $_POST['pet_id']) : 0,
+            'service_list'          => implode(',', $service_list),
+            'package_list'          => implode(',', $package_list),
+            'color'                 => $statusColor[1],
+            'customer_phone_sms'    => (isset($_POST['customer_phone_preference']) && ($_POST['customer_phone_preference'] == 'sms')) ? 1 : 0,
+            'alternate1_name'       => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
+            'alternate1_phone'      => isset($_POST['alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone1']) : '',
+            'alternate1_sms'        => (isset($_POST['alternate_phone1_preference']) && ($_POST['alternate_phone1_preference'] == 'sms')) ? 1 : 0,
+            'alternate2_name'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
+            'alternate2_phone'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
+            'alternate2_sms'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
+            'doctor_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
+            'pet_notes'             => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
         ));
         break;
     case "deleteEvent":
@@ -222,10 +227,10 @@ switch ($option) {
         $result = database_query($sql, DATA_ONLY,FIRST_ROW_ONLY);
         Appointments::SendAppointmentEmail('appointment_canceled', $result['appointment_number']);
         break;
-    case "customerAutocomplete":
+    case "petAutocomplete":
         $term = isset($_REQUEST['term']) ? mysqli_real_escape_string($database_connection, $_REQUEST['term']) : '';
         /*
-            $customerList = array(
+            $petList = array(
                 '<customer_id>' => array(
                     'fullName' => '<string>',
                     'phone' => '<string>',
@@ -233,33 +238,28 @@ switch ($option) {
                 )
             )
         */
-        $customerList = array();
+        $petList = array();
 
-        $sql = "SELECT  `c`.`id`, CONCAT(`c`.`first_name`, ' ', `c`.`last_name`) AS `fullName`, 
-                        `c`.`phone`, `c`.`email`, 
-                        GROUP_CONCAT(`pe`.`name` SEPARATOR ',') AS `pets`
-                FROM `meda_patients` AS `c`
-                LEFT JOIN `providers_customers` AS `pc` ON `c`.`id`=`pc`.`customer_id`
-                LEFT JOIN `meda_pets` AS `pe` ON `c`.`id`=`pe`.`customer_id`
-                WHERE `pc`.`provider_id`=$doc_id
-                GROUP BY `c`.`id` 
-                HAVING (`fullName` LIKE '%$term%') OR (`c`.`phone` LIKE '%$term%') OR (`pets` LIKE '%$term%')";
-
+        $sql = "SELECT `p`.`id`, `p`.`name`, CONCAT(`c`.`first_name`, ' ', `c`.`last_name`) AS `fullName`, `c`.`phone`, `c`.`email`
+                    FROM `meda_pets` AS `p`
+                    LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
+                    LEFT JOIN `providers_customers` AS `pc` ON `c`.`id`=`pc`.`customer_id`
+                    WHERE `pc`.`provider_id`=$doc_id AND `p`.`name` LIKE '%$term%'";
         $results = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
         foreach ($results[0] as $r) {
-            array_push($customerList, $r);
+            array_push($petList, $r);
         }
+
         // format the output
         $output = array();
 
         foreach ($results[0] as $r) {
             $record = array(
                 'id' => '',
-                'label' => $r['fullName'],
-                'description' => "Phone: {$r['phone']}<br />Pets: {$r['pets']}",
+                'label' => $r['name'],
+                'description' => $r['fullName'],
                 'phone' => $r['phone'],
                 'email' => $r['email'],
-                'pets' => $r['pets'],
                 'value' => $r['id'],
             );
             array_push($output, $record);
@@ -267,48 +267,60 @@ switch ($option) {
         echo json_encode($output);
         break;
     case "createCustomer":
-        $fname = isset($_POST['customer_fname']) ? mysqli_real_escape_string($database_connection, $_POST['customer_fname']) : '';
-        $lname = isset($_POST['customer_lname']) ? mysqli_real_escape_string($database_connection, $_POST['customer_lname']) : '';
-        $phone = isset($_POST['customer_phone']) ? mysqli_real_escape_string($database_connection, $_POST['customer_phone']) : '';
-        $email = isset($_POST['customer_email']) ? mysqli_real_escape_string($database_connection, $_POST['customer_email']) : '';
-        $id = 0;
-
-        $sql = "SELECT `id` FROM `meda_patients` WHERE `phone`='$phone' AND `email`='$email'";
-        $result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
-        if ($result[1] == 0) {          // user doesn't exist
-            $sql = "INSERT INTO `meda_patients`(`first_name`, `last_name`, `phone`, `email`)
-                        VALUES ('$fname', '$lname', '$phone', '$email')";
-            database_void_query($sql);
-
-            $sql = "SELECT `id` FROM `meda_patients` WHERE `phone`='$phone' AND `email`='$email'";
-            $r = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
-            $id = $r[0]['id'];
-        } else { $id = $result[0]['id']; }
-
-        $sql = "INSERT INTO `providers_customers`(`provider_id`, `customer_id`) VALUES($doc_id, $id)";
-        database_void_query($sql);
-
-        $petData = array(
+        $customerDetails = array(
+            'first_name' => isset($_POST['customer_fname']) ? mysqli_real_escape_string($database_connection, $_POST['customer_fname']) : '',
+            'last_name' => isset($_POST['customer_lname']) ? mysqli_real_escape_string($database_connection, $_POST['customer_lname']) : '',
+            'phone' => isset($_POST['customer_phone']) ? mysqli_real_escape_string($database_connection, $_POST['customer_phone']) : '',
+            'email' => isset($_POST['customer_email']) ? mysqli_real_escape_string($database_connection, $_POST['customer_email']) : ''
+        );
+        $petDetails = array(
             'name' => isset($_POST['pet_name']) ? mysqli_real_escape_string($database_connection, $_POST['pet_name']) : '',
             'type' => isset($_POST['pet_type']) ? mysqli_real_escape_string($database_connection, $_POST['pet_type']) : '',
             'breed' => isset($_POST['pet_breed']) ? mysqli_real_escape_string($database_connection, $_POST['pet_breed']) : ''
         );
+        $id = 0;
 
-        $petType = PetTypes::getPetTypesByCondition('name', $petData['type']);
+        // check if customer already exists
+        $sql = "SELECT `id` FROM `meda_patients` WHERE `phone`='{$customerDetails['phone']}' AND `email`='{$customerDetails['email']}'";
+        $result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+        // user doesn't exist
+        if ($result[1] == 0) {
+            $sql = "INSERT INTO `meda_patients`(`" . implode(array_keys($customerDetails), '`, `') . "`) VALUES ('" . implode(array_values($customerDetails), "', '") . "')";
+            database_void_query($sql);
+
+            $sql = "SELECT `id` FROM `meda_patients` WHERE `phone`='{$customerDetails['phone']}' AND `email`='{$customerDetails['email']}'";
+            $r = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+            $id = $r[0]['id'];
+        } else { $id = $result[0]['id']; }
+
+        // insert a new entry in providers_customers table
+        $sql = "INSERT INTO `providers_customers`(`provider_id`, `customer_id`) VALUES($doc_id, $id)";
+        database_void_query($sql);
+
+        // insert a new pet
+        $petType = PetTypes::getPetTypesByCondition('name', $petDetails['type']);
         $newType = null;
         // if pet type cannot be found -> add new pet type
         if (empty($petType)) {
             $newType = new PetTypes();
-            $newType -> setName($petData['type']);
+            $newType -> setName($petDetails['type']);
             $newType -> saveType();
         } else {
             $newType = $petType[0];
         }
-        $newPet = new Pets(-1, $id, $petData['name'], $newType -> getId(), $petData['breed']);
+        $newPet = new Pets(-1, $id, $petDetails['name'], $newType -> getId(), $petDetails['breed']);
         $newPet -> add();
 
-        echo $id;
-
+        // generate returned data
+        $output = array(
+            'id' => $id,
+            'customer_name' => $customerDetails['first_name'] . ' ' . $customerDetails['last_name'],
+            'customer_phone' => $customerDetails['phone'],
+            'customer_email' => $customerDetails['email'],
+            'pet_id' => $newPet -> getId(),
+            'pet_name' => $newPet -> getName()
+        );
+        echo json_encode($output);
         break;
 }
 ?>

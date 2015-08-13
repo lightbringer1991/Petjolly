@@ -157,8 +157,8 @@
 <?php
     if(Application::Get('page') == 'home' && Application::Get('provider') == '' && Application::Get('member') == '' && Application::Get('doctor') == '' && Application::Get('patient') == '')
     {
-//        include_once('page/home.php');
-        include_once('provider/home.php');
+        // include_once('provider/home.php');
+      include_once('provider/fullCalendar.php');
     }
     else
     {

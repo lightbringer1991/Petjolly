@@ -28,13 +28,46 @@ switch ($option) {
     // get the most 3 recent appointments
     case "getAppointmentHistory":
         if ($id != '') {
-            $query = "SELECT `id`, `appointment_number`, `appointment_date`, `appointment_time`, `visit_duration`, `doctor_notes` 
+            $query = "SELECT `id`, `appointment_date`, `patient_notes`, `visit_price`, `service_list`, `package_list` 
                         FROM `meda_appointments` 
                         WHERE `patient_id`=$id 
                         ORDER BY `id` DESC 
                         LIMIT 3";
             $result = database_query($query);
-            echo json_encode($result);
+
+            $output = array();
+
+            foreach ($result as $r) {
+                $services = explode(',', $r['service_list']);
+                $packages = explode(',', $r['package_list']);
+
+                // generate services data
+                $serviceString = '<b>Services: </b><br /><ul>';
+                foreach ($services as $sid) {
+                    if ($sid == '') { break; }
+                    $s = Services::getServiceById($sid);
+                    if ($s != null) { $serviceString .= "<li>" . $s -> getName() . "</li>"; }
+                }
+                $serviceString .= "</ul>";
+
+                $serviceString .= "<b>Packages: </b><br /><ul>";
+                foreach ($packages as $pid) {
+                    if ($pid == '') { break; }
+                    $pkg = Packages::getPackageById($pid);
+                    if ($pkg != null) { $serviceString .= "<li>" . $pkg -> getName() . "</li>"; }
+                }
+                $serviceString .= "</ul>";
+
+                array_push($output, array(
+                        'id' => $r['id'],
+                        'date' => date('d/m/Y', strtotime($r['appointment_date'])),
+                        'services' => $serviceString,
+                        'notes' => $r['patient_notes'],
+                        'price' => $r['visit_price']
+                    ));
+            }
+
+            echo json_encode($output);
         }
         break;
 	case "getSummaryData":

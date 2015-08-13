@@ -294,6 +294,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                         <input name="status" type="radio" value="5" /> No Show <br />
                         <input name="status" type="radio" value="0" style="display: none;" />
                     </form>
+                    <a href='#' data-role='view_invoice'>Invoice</a>
                 </div>
             </div>
         </div>
@@ -307,6 +308,24 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
         </div>
     </div>
 	
+    <div id="invoice_container">
+        <div class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Invoice</h4>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Edit Event -->
 <!--
     <div id="cal_editModal" class="modal fade">
@@ -389,142 +408,260 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
         </div>
     </div>
 	
-	<!-- Add Event Modal -->
-	<div id="cal_addModal" class="modal fade">
-		<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Add new Appointment</h4>
-			</div>
+    <style type="text/css">
+    #form-appointment [data-role='step1_2'] table td:nth-child(1) {
+        text-align: left;
+        width: 25%;
+    }
 
-			<div class="modal-body">
-				<form id='form-appointment'>
-					<fieldset>
-						<input type="hidden" name='appointment_id' value='' />
-						<input type="hidden" name='appointment_customer_id' value='' />
-						<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
-							<tbody>
-								<tr>
-									<td width="25%" align="left">
-										<label for="customer_name">Customer/Pet Name <span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-										<input type="text" name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<a href="#cal_add_customer" data-toggle="modal" style="color: blue">Add a new customer</a>
-									</td>
-                                    <td>
-                                        <a href="#appointment_history" data-toggle="modal">Appointment History</a>
-                                    </td>
-								</tr>
+    #form-appointment [data-role='step1_2'] table td:nth-child(2) {
+        text-align: left;
+        padding-left: 6px;
+        width: 50%;
+    }
+
+    #form-appointment [data-role='step1_2'] table td:nth-child(3) {
+        text-align: center;
+        width: 12.5%;
+    }
+
+    #form-appointment [data-role='step1_2'] table td:nth-child(4) {
+        text-align: center;
+        width: 12.5%;
+    }
+    </style>
+
+    <div id="cal_addModal" class="modal fade">
+        <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Add new Appointment</h4>
+            </div>
+
+            <div class="modal-body">
+                <form id="form-appointment">
+                    <input type="hidden" name="appointment_id" value="" />
+                    <input type="hidden" name="pet_id" value="72" />
+                    <div data-role='step1_1'>
+                        <fieldset>
+                            <table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
                                 <tr>
-                                    <td width="25%" align="left">
-                                        <label for="customer_phone">Phone:</label>
+                                    <td style="text-align:center; padding-left:6px;">
+                                        <label for="pet_name">Find Pet Name <span class="required">*</span>:</label>
+                                        <input type="text" name="pet_name" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
                                     </td>
-                                    <td style="text-align:left;padding-left:6px;">
-                                        <input type="text" name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                    <div data-role='step1_2'>
+                        <fieldset>
+                            <table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        Communication<br />Preference
+                                    </td>
+                                    <td>
+                                        Text/SMS
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td width="25%" align="left">
+                                    <td>
+                                        <label for="customer_name">Customer Name:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="customer_phone">Customer Phone:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="customer_phone_preference" value="phone">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="customer_phone_preference" value="sms">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <label for="customer_email">Email:</label>
                                     </td>
-                                    <td style="text-align:left;padding-left:6px;">
-                                        <input type="text" name="customer_email" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                    <td>
+                                        <input type="text" name="customer_email" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
                                     </td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 <tr>
-                                    <td width="25%" align="left">
-                                        <label for="customer_pets">Pets:</label>
-                                    </td>
-                                    <td style="text-align:left;padding-left:6px;">
-                                        <input type="text" name="customer_pets" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
-                                    </td>
-                                </tr>
-								<tr>
-									<td width="25%" align="left">
-										<label for="service_list[]">Service List<span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-										<select name="service_list[]" style="width:250px;" multiple="multiple" size="5" class="required">
-                                            <optgroup label="Services">
-<?php
-	$services = Services::getAllActiveServicesByProviderID($objLogin -> getLoggedID());
-	foreach ($services as $s) {
-		echo '<option value="s' . $s -> getId() . '">' . $s -> getName() . '</option>';
-	}
-?>
-                                            </optgroup>
-                                            <optgroup label="Packages">
-<?php
-    $packages = Packages::getAllActivePackagesByProviderID($objLogin -> getLoggedID());
-    foreach ($packages as $p) {
-        echo '<option value="p' . $p -> getId() . '">' . $p -> getName() . '</option>';
-    }
-?>
-                                            </optgroup>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td width="25%" align="left">
-										<label for="appointment_date">Start date <span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-										<input type="text" name="appointment_date" id="datepicker" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
-									</td>
-								</tr>
-								<tr>
-									<td width="25%" align="left">
-										<label for="appointment_time">Start time <span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-										<input type="text" name="appointment_time" placeholder="HH:MM" class="mgrid_text" dir="ltr" id="tp1" maxlength="70" value='' style="width:250px;" />
-									</td>
-								</tr>
-								<tr>
-									<td width="25%" align="left">
-										<label for="duration">Duration <span class="required">*</span>:</label>
-									</td>
-									<td style="text-align:left;padding-left:6px;">
-<!--										<input name="duration" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />   -->
-                                        <select name="duration" style="width:250px;">
-<?php
-    $interval = 15;
-    $currentDuration = 0;
-    while ($currentDuration < 120) {
-        $currentDuration += $interval;
-        echo "<option value='$currentDuration'>$currentDuration minutes</option>";
-    }
-?>
-                                        </select>
-									</td>
-								</tr>
-                                <tr>
-                                    <td align="left"> 
-                                        <label for="notes">Notes:</label>
+                                    <td>
+                                        <label for="alternate_name1">Alternate1 Name:</label>
                                     </td>
                                     <td>
-                                        <textarea name="notes" class="mgrid_text" style="width:250px;"></textarea>
+                                        <input type="text" name="alternate_name1" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="alternate_phone1">Alternate1 Phone:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="alternate_phone1" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="alternate_phone1_preference" value="phone">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="alternate_phone1_preference" value="sms">
                                     </td>
                                 </tr>
-							</tbody>
-						</table>
-					</fieldset>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-warning" data-role='appointment-submit'>Submit</button>
-			</div>
-		</div>
-		</div>
-	</div>
-	
+                                <tr>
+                                    <td>
+                                        <label for="alternate_name2">Alternate1 Name:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="alternate_name2" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="alternate_phone2">Alternate1 Phone:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="alternate_phone2" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="alternate_phone2_preference" value="phone">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="alternate_phone2_preference" value="sms">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="customer_notes">Customer Notes:</label>
+                                    </td>
+                                    <td>
+                                        <textarea name="customer_notes" class="mgrid_text" style="width:250px;"></textarea>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                    <div data-role='step2'>
+                        <div class="row">
+                        <div class="col-md-5 col-xs-5 col-lg-5">
+                            <fieldset>
+                                <table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                    <tr>
+                                        <td width="25%" align="left">
+                                            <label for="service_list[]">Service List<span class="required">*</span>:</label>
+                                        </td>
+                                        <td style="text-align:left;padding-left:6px;">
+                                            <select name="service_list[]" style="width:150px;" multiple="multiple" size="5" class="required">
+                                                <optgroup label="Services">
+                                                    <?php
+                                                        $services = Services::getAllActiveServicesByProviderID($objLogin -> getLoggedID());
+                                                        foreach ($services as $s) {
+                                                            echo '<option value="s' . $s -> getId() . '">' . $s -> getName() . '</option>';
+                                                        }
+                                                    ?>
+                                                </optgroup>
+                                                <optgroup label="Packages">
+                                                    <?php
+                                                        $packages = Packages::getAllActivePackagesByProviderID($objLogin -> getLoggedID());
+                                                        foreach ($packages as $p) {
+                                                            echo '<option value="p' . $p -> getId() . '">' . $p -> getName() . '</option>';
+                                                        }
+                                                    ?>
+                                                </optgroup>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" align="left">
+                                            <label for="appointment_date">Start date <span class="required">*</span>:</label>
+                                        </td>
+                                        <td style="text-align:left;padding-left:6px;">
+                                            <input type="text" name="appointment_date" id="datepicker" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:220px;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" align="left">
+                                            <label for="appointment_time">Start time <span class="required">*</span>:</label>
+                                        </td>
+                                        <td style="text-align:left;padding-left:6px;">
+                                            <input type="text" name="appointment_time" placeholder="HH:MM" class="mgrid_text" dir="ltr" id="tp1" maxlength="70" value='' style="width:220px;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%" align="left">
+                                            <label for="duration">Duration <span class="required">*</span>:</label>
+                                        </td>
+                                        <td style="text-align:left;padding-left:6px;">
+                                            <select name="duration" style="width:220px;">
+                                                <?php
+                                                    $interval = 15;
+                                                    $currentDuration = 0;
+                                                    while ($currentDuration < 120) {
+                                                        $currentDuration += $interval;
+                                                        echo "<option value='$currentDuration'>$currentDuration minutes</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left"> 
+                                            <label for="pet_notes">Pet Notes:</label>
+                                        </td>
+                                        <td>
+                                            <textarea name="pet_notes" class="mgrid_text" style="width:220px;"></textarea>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-7 col-xs-7 col-lg-7">
+                            <h2 align='center'>Pet History</h2>
+                            <div data-role="pet_history_container">
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div data-role="step1">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#cal_add_customer">NEW CUSTOMER</button>
+                    <button type="button" class="btn btn-warning" data-role='next_step'>NEXT</button>
+                </div>
+                <div data-role="step2">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-info" data-role='previous_step'>BACK</button>
+                    <button type="button" class="btn btn-warning" data-role='submit'>ADD</button>
+                </div>
+            </div>
+
+        </div>
+        </div>
+    </div>
+
 	<div id="cal_add_customer" class="modal fade">
 		<div class="modal-dialog">
 		<div class="modal-content">

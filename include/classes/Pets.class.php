@@ -61,6 +61,14 @@ class Pets {
 		if ($this -> id == -1) {
 			$sql = sprintf("INSERT INTO `meda_pets`(`customer_id`, `name`, `type_id`, `breed`) VALUES('%s', '%s', '%s', '%s')", $this -> customer_id, $this -> name, $this -> type_id, $this -> breed);
 			database_void_query($sql);
+
+			$sql = "SELECT `id` FROM `meda_pets` 
+						WHERE `name`='{$this -> name}' 
+						AND `customer_id`='{$this -> customer_id}'
+						AND `type_id`='{$this -> type_id}'
+						AND `breed`='{$this -> breed}'";
+			$r = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+			$this -> id = $r[0]['id'];
 		}
 	}
 	

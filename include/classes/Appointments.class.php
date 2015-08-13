@@ -27,7 +27,7 @@
  *      
  **/
 
-
+// patient id now refers to Pet ID
 
 
 
@@ -1758,8 +1758,6 @@ class Appointments extends MicroGrid {
 
         }
 
-		
-
 		$docid = isset($params['docid']) ? $params['docid'] : '';		
 		$schid = isset($params['schid']) ? $params['schid'] : '';
 		$daddid = isset($params['daddid']) ? $params['daddid'] : '';
@@ -1772,11 +1770,50 @@ class Appointments extends MicroGrid {
 		$for_whom = isset($params['for_whom']) ? $params['for_whom'] : '';
 		$first_visit = isset($params['first_visit']) ? $params['first_visit'] : '';
         $patient_id = isset($params['patient_id']) ? $params['patient_id'] : '';
+        $color = isset($params['color']) ? $params['color'] : '';
+        $customer_notes = isset($params['doctor_notes']) ? $params['doctor_notes'] : '';
+
         $service_list = isset($params['service_list']) ? $params['service_list'] : '';
         $package_list = isset($params['package_list']) ? $params['package_list'] : '';
-        $color = isset($params['color']) ? $params['color'] : '';
-        $pets = isset($params['pets']) ? $params['pets'] : '';
-        $notes = isset($params['doctor_notes']) ? $params['doctor_notes'] : '';
+
+        $fields = array(
+        	'id' 										=> null,
+        	'appointment_number'						=> strtoupper(get_random_string(10)),
+			'appointment_description'					=> 'Appointment for pet services',
+        	'doctor_id' 								=> isset($params['docid']) ? $params['docid'] : '',
+        	'doctor_speciality_id'						=> isset($params['dspecid']) ? $params['dspecid'] : '',
+        	'doctor_address_id'							=> isset($params['daddid']) ? $params['daddid'] : '',
+        	'service_list' 								=> $service_list,
+        	'package_list' 								=> $package_list,
+        	'color'										=> isset($params['color']) ? $params['color'] : '',
+        	'patient_id'								=> isset($params['patient_id']) ? $params['patient_id'] : '',
+        	'date_created'								=> date('Y-m-d H:i:s'),
+        	'appointment_date'							=> isset($params['date']) ? $params['date'] : '0000-00-00',
+        	'appointment_time'							=> isset($params['start_time']) ? str_replace('-', ':', $params['start_time']) : '00:00:00',
+        	'visit_duration'							=> isset($params['duration']) ? $params['duration'] : 0,
+        	'visit_price' 								=> self::calculatePrice($service_list, $package_list),
+        	'doctor_notes'								=> isset($params['doctor_notes']) ? $params['doctor_notes'] : '',
+        	'patient_notes' 							=> isset($params['pet_notes']) ? $params['pet_notes'] : '',
+        	'phone_SMS'									=> isset($params['customer_phone_sms']) ? $params['customer_phone_sms'] : 0,
+        	'alternate_name1'							=> isset($params['alternate1_name']) ? $params['alternate1_name'] : '',
+        	'alternate_phone1'							=> isset($params['alternate1_phone']) ? $params['alternate1_phone'] : '',
+        	'alternate_name2' 							=> isset($params['alternate2_name']) ? $params['alternate2_name'] : '',
+        	'alternate_phone2'							=> isset($params['alternate2_phone']) ? $params['alternate2_phone'] : '',
+        	'alternate_SMS1' 							=> isset($params['alternate1_sms']) ? $params['alternate1_sms'] : 0,
+        	'alternate_SMS2' 							=> isset($params['alternate2_sms']) ? $params['alternate2_sms'] : 0,
+        	'for_whom'									=> isset($params['for_whom']) ? $params['for_whom'] : '',
+        	'first_visit'								=> isset($params['first_visit']) ? $params['first_visit'] : '',
+        	'insurance_id'								=> isset($params['insid']) ? $params['insid'] : '',
+        	'visit_reason_id'							=> isset($params['vrid']) ? $params['vrid'] : '',
+        	'status'									=> 0,
+        	'status_changed'							=> '0000-00-00 00:00:00',
+        	'created_by'								=> '',
+        	'created_by_id'								=> $objLogin -> GetLoggedID(),
+        	'p_arrival_reminder_sent'					=> 0,
+        	'p_confirm_reminder_sent'					=> 0,
+        	'd_confirm_reminder_sent'					=> 0
+        );
+
 
 		$sql = 'SELECT id, appointment_number
 				FROM '.TABLE_APPOINTMENTS.'
@@ -1788,102 +1825,76 @@ class Appointments extends MicroGrid {
 					appointment_time = \''.$start_time.':00\'';
 		$result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
 
-		if($result[1] > 0){
-
+		if($result[1] > 0) {
 			self::$static_error = _APPOINTMENT_ALREADY_BOOKED_ALERT;
-
 			return false;
-
-		}else{
-
+		} else {
 			// check if patient has reached the maximum number of allowed 'open' appointments
-
 			$approval_required = ModulesSettings::Get('appointments', 'approval_required');			
-
 			
-
-            // check patinet if maximum allowed appointments reached
-
-            if($objLogin->IsLoggedInAsPatient()){
-
+            // check patient if maximum allowed appointments reached
+            if($objLogin -> IsLoggedInAsPatient()){
                 $max_appointments = ModulesSettings::Get('appointments', 'maximum_allowed_appointments');
-
                 $sql = 'SELECT COUNT(*) as cnt
-
                         FROM '.TABLE_APPOINTMENTS.'
-
-                        WHERE patient_id = '.(int)$objLogin->GetLoggedID().' AND status = 0';				
-
+                        WHERE patient_id = '.(int)$objLogin -> GetLoggedID().' AND status = 0';				
                 $result = database_query($sql, DATA_ONLY);
-
                 $cnt = isset($result[0]['cnt']) ? (int)$result[0]['cnt'] : 0;
-
                 if($cnt >= $max_appointments){
-
                     self::$static_error = _MAX_APPOINTMENTS_ERROR;
-
                     return false;
-
                 }		                
-
             }
 
-			
-
-			if($approval_required == 'by email'){
-
+			if($approval_required == 'by email') {
 				$msg = _APPT_CREATED_CONF_BY_EMAIL_MSG;
-
 				$copy_subject = '';
-
 				$email_template = 'new_appointment_confirm_by_email';					
-
-				$status = '0';
-
-			}else if($approval_required == 'by admin/doctor'){
-
+				$field['status'] = '0';
+			} else if ($approval_required == 'by admin/doctor') {
 				$msg = _APPT_CREATED_CONF_BY_ADMIN_MSG;
-
 				$copy_subject = _PATIENT_REQUESTED_APPOINTMENT;
-
 				$email_template = 'new_appointment_confirm_by_admin_doctor';					
-
-				$status = '0';
-
-			}else{
-
+				$field['status'] = '0';
+			} else {
 				// automatic
-
 				$msg = _APPOINTMENT_SUCCESS_BOOKED;
-
 				$copy_subject = '';
-
 				$email_template = 'new_appointment_accepted';
-
-				$status = '1';
-
+				$field['status'] = '1';
 			}
-
-            
 
             $doctor_info = Doctors::GetDoctorInfoById($docid);
 			$visit_price = isset($doctor_info[0]['default_visit_price']) ? $doctor_info[0]['default_visit_price'] : '0';
 
-            $created_by = ($objLogin->GetLoggedType() == 'owner' || $objLogin->GetLoggedType() == 'admin') ? 'admin' : $objLogin->GetLoggedType();
-            if ($objLogin->GetLoggedType() == "doctor") { $created_by = "provider"; }
-            elseif ($objLogin -> GetLoggedType() == "patient") { $created_by = "customer"; }
-            elseif ($objLogin -> GetLoggedType() == "staff") { $created_by = "staff"; }
+            $field['created_by'] = ($objLogin->GetLoggedType() == 'owner' || $objLogin->GetLoggedType() == 'admin') ? 'admin' : $objLogin->GetLoggedType();
+            if ($objLogin->GetLoggedType() == "doctor") { $field['created_by'] = "provider"; }
+            elseif ($objLogin -> GetLoggedType() == "patient") { $field['created_by'] = "customer"; }
+            elseif ($objLogin -> GetLoggedType() == "staff") { $field['created_by'] = "staff"; }
 
-            if($objLogin->IsLoggedInAsPatient()){
-                $patient_id_in_sql = $objLogin->GetLoggedID();
-            }else{
+            if($objLogin -> IsLoggedInAsPatient()) {
+                $patient_id_in_sql = $objLogin -> GetLoggedID();
+            } else {
                 $patient_id_in_sql = ($patient_id != '') ? (int)$patient_id : '0';
             }
 
             
-
 			$appt_number = strtoupper(get_random_string(10));
 
+			$sql = 'INSERT INTO ' . TABLE_APPOINTMENTS . '(' . implode(',', array_keys($fields)) . ") VALUES ('" . implode("','", array_values($fields)) . "')";
+			if(database_void_query($sql)){
+				self::$static_message = $msg;
+				////////////////////////////////////////////////////////////
+				// send email to patient, admin and doctor here
+				Appointments::SendAppointmentEmail($email_template, $appt_number);
+				////////////////////////////////////////////////////////////
+				return true;	
+			} else {
+				///echo $sql.'<br>'.database_error();
+				self::$static_error = _BOOKING_APPOINTMENT_ERROR;
+				return false;
+			}
+/*
 			$sql = 'INSERT INTO '.TABLE_APPOINTMENTS.'(
 					id,
 					appointment_number,
@@ -1934,62 +1945,56 @@ class Appointments extends MicroGrid {
 					\'' . $notes . '\',
 					\'\',
 					'.(int)$for_whom.',
-
 					'.(int)$first_visit.',
-
                     '.(int)$insid.',
-
                     '.(int)$vrid.',
-
 					'.(int)$status.',
-
 					\'0000-00-00 00:00:00\',
-
                     \'' . $created_by . '\',
-                    \'' . $objLogin->GetLoggedID() . '\',
-
+ 	                \'' . $objLogin->GetLoggedID() . '\',
 					0,
-
 					0,
-
 					0
-
 				)
-
 			';
 
 			if(database_void_query($sql)){
-
 				self::$static_message = $msg;
 
-				
-
 				////////////////////////////////////////////////////////////
-
 				// send email to patient, admin and doctor here
-
 				Appointments::SendAppointmentEmail($email_template, $appt_number);
-
 				////////////////////////////////////////////////////////////
-
-
-
 				return true;	
-
-			}else{
-
+			} else {
 				///echo $sql.'<br>'.database_error();
-
 				self::$static_error = _BOOKING_APPOINTMENT_ERROR;
-
 				return false;
-
 			}
+*/
 
 		}		
 
 	}
 
+	public static function calculatePrice($serviceList, $packageList) {
+		$total = 0;
+		$services = explode(',', $serviceList);
+		$packages = explode(',', $packageList);
+
+		foreach ($services as $sid) {
+			if ($sid == '') { break; }
+			$service = Services::getServiceById($sid);
+			$total += $service -> getPrice();
+		}
+
+		foreach ($packages as $pid) {
+			if ($pid == '') { break; }
+			$package = Packages::getPackageById($pid);
+			$total += $package -> getPrice();
+		}
+		return $total;
+	}
 	
 
 	/**
@@ -2855,33 +2860,18 @@ class Appointments extends MicroGrid {
 	public static function getAppointmentById($id) {
 		$sql = "SELECT `a`.`id`, `a`.`appointment_number`, `a`.`appointment_description`,
 						`a`.`status`, `a`.`appointment_date`, `a`.`appointment_time`, 
-						`a`.`visit_duration`, `a`.`pets`,
-						`a`.`patient_id`,
+						`a`.`visit_duration`, `a`.`patient_id`, 
 						`a`.`service_list`, `a`.`package_list`,
-						`p`.`first_name`, `p`.`last_name`, `p`.`phone`, `p`.`email`
+						`a`.`alternate_name1`, `a`.`alternate_phone1`, `a`.`alternate_name2`, `alternate_phone2`,
+						`a`.`phone_SMS`, `a`.`alternate_SMS1`, `a`.`alternate_SMS2`,
+						`a`.`doctor_notes`, `a`.`patient_notes`,
+						`p`.`name`, `p`.`id` AS `pet_id`,
+						`c`.`first_name`, `c`.`last_name`, `c`.`phone`, `c`.`email`
 					FROM `meda_appointments` AS `a`
-					LEFT JOIN `meda_patients` AS `p` ON `a`.`patient_id`=`p`.`id`
+					LEFT JOIN `meda_pets` AS `p` ON `a`.`patient_id`=`p`.`id`
+					LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
 					WHERE `a`.`id`=$id";
-		
-/*
-		$sql = "SELECT `meda_appointments`.`id`, 
-							`appointment_number`, 
-							`appointment_description`, 
-							`appointment_date`, 
-							`appointment_time`, 
-							`visit_duration`, 
-							`meda_patients`.`id` AS `customer_id`,
-							`first_name`, 
-							`last_name`,
-							`status`,
-							`color`,
-							`pets`,
-							`service_list`,
-							`package_list`
-						FROM `meda_appointments`, `meda_patients` 
-						WHERE `meda_appointments`.`id`=$id
-							AND `patient_id`=`meda_patients`.`id`";
-*/
+
 		return database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
 	}
 	
@@ -2889,21 +2879,12 @@ class Appointments extends MicroGrid {
 		$doc_id = Session::Get("session_account_id");
 
 		$sql = "SELECT `a`.`id`, `a`.`appointment_date`, `a`.`appointment_time`,
-						`a`.`visit_duration`, `p`.`first_name`, `p`.`last_name`,
-						`a`.`color`, `a`.`pets`
+						`a`.`visit_duration`, `c`.`first_name`, `c`.`last_name`,
+						`a`.`color`, `p`.`name`
 					FROM `meda_appointments` AS `a`
-					LEFT JOIN `meda_patients` AS `p` ON `a`.`patient_id`=`p`.`id`
+					LEFT JOIN `meda_pets` AS `p` ON `a`.`patient_id`=`p`.`id`
+					LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
 					WHERE `a`.`doctor_id`=$doc_id AND `a`.`status`!= 2";
-		// $sql = "SELECT `meda_appointments`.`id`,
-		// 				`appointment_date`, 
-		// 				`appointment_time`, 
-		// 				`visit_duration`,
-		// 				`first_name`, 
-		// 				`last_name`,
-		// 				`color`,
-		// 				`pets`
-		// 		FROM `meda_appointments`, `meda_patients` 
-		// 		WHERE `patient_id`=`meda_patients`.`id` AND `doctor_id`=$doc_id AND `status`!=2";
 		if ($start_date != '') { $sql .= " AND DATE(`appointment_date`) >= DATE('$start_date')"; }
 		if ($end_date != '') { $sql .= " AND DATE(`appointment_date`) <= DATE('$end_date')"; }
 		return database_query($sql, DATA_AND_ROWS, ALL_ROWS);

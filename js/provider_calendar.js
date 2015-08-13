@@ -40,6 +40,275 @@ function getTimeOff(url, start, end) {
     return result;
 }
 
+var createAppointmentAction = {
+    config: {
+        calendarSelector: null,
+        formCreate: null,
+        formCreateCustomer: null,
+
+        // no change in this section
+        ajaxRetrieveHistory: 'ajax/appointments.ajax.php',
+        ajaxPetAutocomplete: 'ajax/calendar.ajax.php?option=petAutocomplete',
+        ajaxEventSave: 'ajax/calendar.ajax.php?option=createEvent',
+        ajaxEventEdit: 'ajax/calendar.ajax.php?option=editEvent',
+        ajaxRetrieveDescription: 'ajax/calendar.ajax.php?option=eventDescription',
+        ajaxAddCustomer: 'ajax/calendar.ajax.php?option=createCustomer'
+    },
+    init: function(newSettings) {
+        $.extend(createAppointmentAction.config, newSettings);
+        createAppointmentAction.setup();
+    },
+    setup: function() {
+        // initialize display
+        createAppointmentAction.config.formCreate.find("[data-role='step1_2']").hide();
+        createAppointmentAction.config.formCreate.find("[data-role*='step2']").hide();
+
+        // ----- step 1 event handlers
+        // action taken if user click on Next button
+        createAppointmentAction.config.formCreate.on('click', "button[data-role='next_step']", createAppointmentAction.displayStep2);
+        createAppointmentAction.config.formCreate.on('change', "input[name='pet_id']", function() {
+            createAppointmentAction.config.formCreate.find("[data-role='step1_2']").show(1000);
+        });
+        createAppointmentAction.config.formCreate.on('click', "button[data-role='previous_step']", createAppointmentAction.displayStep1);
+        // autocomplete
+        createAppointmentAction.config.formCreate.find("input[name='pet_name']")
+            .autocomplete({
+                source: createAppointmentAction.config.ajaxPetAutocomplete,
+                appendTo: createAppointmentAction.config.formCreate,
+                focus: function(event, ui) {
+                    // prevent autocomplete from updating the textbox
+                    event.preventDefault();
+                    return false;
+                },
+                select: function(event, ui) {
+                    // prevent autocomplete from updating the textbox
+                    event.preventDefault();
+                    // manually update the textbox and hidden field
+                    createAppointmentAction.config.formCreate.find("input[name='pet_name']").val(ui.item.label);
+                    createAppointmentAction.config.formCreate.find("input[name='pet_id']").val(ui.item.value).trigger('change');
+                    createAppointmentAction.config.formCreate.find("input[name='customer_name']").val(ui.item.description);
+                    createAppointmentAction.config.formCreate.find("input[name='customer_phone']").val(ui.item.phone);
+                    createAppointmentAction.config.formCreate.find("input[name='customer_phone_preference'][value='phone']").click();
+                    createAppointmentAction.config.formCreate.find("input[name='customer_email']").val(ui.item.email);
+                    return false;
+                },
+                response: function(event, ui) {
+                    if (ui.content.length === 0) {
+                        $("div[data-class='customer_error']").html("No customer found");
+                        $("input[name='c_id']").val("");
+                    } else {
+                        $("div[data-class='customer_error']").empty();
+                    }
+                }
+            })
+            .autocomplete("instance")._renderItem = function(ul, item) {
+                return $("<li>").append("<a>" + item.label + "<br />" + item.description + "</a>").appendTo(ul);
+            };
+
+        // ----- step 2 event handlers (including event submission)
+        // submit new event / edit existing event
+        createAppointmentAction.config.formCreate.on('click', "button[data-role='submit']", createAppointmentAction.submitForm);
+
+
+        // ----- create new customer
+        createAppointmentAction.config.formCreateCustomer.on('click', "[data-role='calendar-customer-submit']", createAppointmentAction.submitCustomerForm);
+    },
+    displayStep1: function(event) {
+        createAppointmentAction.config.formCreate.find("[data-role*='step2']").hide();
+        createAppointmentAction.config.formCreate.find("[data-role*='step1']").show();
+    },
+    displayStep2: function(event) {
+        var petID = createAppointmentAction.config.formCreate.find("input[name='pet_id']").val();
+        if (petID == '') { return false; }          // user cannot click next if no pet is selected
+
+        // get appointment history
+        $.ajax({
+            type: 'POST',
+            url: createAppointmentAction.config.ajaxRetrieveHistory,
+            data: { 'id': petID, 'option': 'getAppointmentHistory' },
+            success: function(data) {
+                var jsonData = JSON.parse(data);
+                var output = "<table class='table table-hover table-striped table-bordered'>" + 
+                                "<thead>" + 
+                                    "<th class='c_table'>Date/Time</th>" + 
+                                    "<th class='c_table'>Services</th>" + 
+                                    "<th class='c_table'>Pet Notes</th>" + 
+                                    "<th class='c_table'>Amount Paid</th>" + 
+                                "</thead>" + 
+                                "<tbody>";
+                if (jsonData.length == 0) {
+                    output +=   "<tr>" + 
+                                "<td colspan='4' align='center'>No appointment recorded</td>" + 
+                                "</tr>";
+                }
+                else {
+                    for(var i = 0; i < jsonData.length; i++) {
+                        output +=   "<tr data-id='" + jsonData[i].id + "'>" + 
+                                        "<td>" + jsonData[i].date + "</td>" + 
+                                        "<td>" + jsonData[i].services + "</td>" + 
+                                        "<td>" + jsonData[i].notes + "</td>" + 
+                                        "<td>" + jsonData[i].price + "</td>" + 
+                                    "</tr>";
+                    }               
+                }
+                output += "</tbody></table>";
+
+                createAppointmentAction.config.formCreate.find('[data-role="pet_history_container"]').html(output);
+            }
+        });
+
+        // hide step 1 and display step 2
+        createAppointmentAction.config.formCreate.find("[data-role*='step1']").hide();
+        createAppointmentAction.config.formCreate.find("[data-role*='step2']").show();
+    },
+    submitForm: function(event) {
+        var ajaxURL = createAppointmentAction.config.ajaxEventSave;
+        if (createAppointmentAction.config.formCreate.find("input[name='appointment_id']").val() != '') {
+            ajaxURL = createAppointmentAction.config.ajaxEventEdit;
+        }
+
+        // check if a pet is selected
+        if (createAppointmentAction.config.formCreate.find("input[name='pet_id']").val() == '') {
+            alert("Invalid pet");
+            return false;
+        }
+
+        //check if any service or package is selected
+        if (createAppointmentAction.config.formCreate.find("select[name='service_list[]']").multiselect('getChecked').length == 0) {
+            alert("Please select at least 1 service or 1 package");
+            return false;
+        }
+
+        var data = createAppointmentAction.config.formCreate.find('form').serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: ajaxURL,
+            data: data,
+            success: function() {
+                createAppointmentAction.config.formCreate.modal('hide');
+                clearEventForm(createAppointmentAction.config.formCreate);
+                createAppointmentAction.config.formCreate.find("[data-role*='step2']").hide();
+                createAppointmentAction.config.formCreate.find("[data-role*='step1']").hide();
+                createAppointmentAction.config.formCreate.find("[data-role='step1_1']").show();
+                createAppointmentAction.config.calendarSelector.fullCalendar('refetchEvents');
+            }
+        });
+    },
+    submitCustomerForm: function(event) {
+        var data = createAppointmentAction.config.formCreateCustomer.find("form").serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: createAppointmentAction.config.ajaxAddCustomer,
+            data: data,
+            success: function(data) {
+                var jsonData = JSON.parse(data);
+                createAppointmentAction.resetForm(createAppointmentAction.config.formCreate);
+
+                for (var property in jsonData ) {
+                    createAppointmentAction.config.formCreate.find("[name='" + property + "']").val(jsonData[property]);
+                }
+                createAppointmentAction.config.formCreateCustomer.modal('hide');
+                createAppointmentAction.config.formCreate.find("[name='pet_id']").trigger('change');
+            }
+        });
+    },
+    // static functions, can be used without init()
+    resetForm: function(form) {
+        clearEventForm(form);
+        form.find("[data-role*='step2']").hide();
+        form.find("[data-role*='step1']").hide();
+        form.find("[data-role='step1_1']").show();
+        form.find(".modal-footer [data-role='step1']").show();
+        form.find("button[data-role='submit']").html('ADD');
+    },
+    openCreateForm: function(form, duration, startDate, startTime) {
+        createAppointmentAction.resetForm(form);
+        form.find('h4.modal-title').html("Create new Appointment");
+
+        form.find("select[name='duration']").val(duration);
+        form.find("input[name='appointment_date']").val(startDate);
+        form.find("input[name='appointment_time']").val(startTime);
+
+        form.modal('show');
+    },
+    openEditForm: function(form, event_id) {
+        $.ajax({
+            type: 'POST',
+            url: createAppointmentAction.config.ajaxRetrieveDescription,
+            data: { 'id': event_id, 'mode': 'getInfo' },
+            async: false,
+            success: function(data) {
+                eventData = JSON.parse(data);
+                createAppointmentAction.resetForm(form);
+
+                // select services
+                var services = eventData.service_list.split(",");
+                for (var i = 0; i < services.length; i++) {
+                    form.find("select[name='service_list[]']").multiselect('widget').find(":checkbox[value='s" + services[i] + "']").click();
+                }
+                var packages = eventData.package_list.split(",");
+                for (var i = 0; i < packages.length; i++) {
+                    form.find("select[name='service_list[]']").multiselect('widget').find(":checkbox[value='p" + packages[i] + "']").click();
+                }
+
+                // select preferences
+                form.find("input[name='customer_phone_preference'][value='" + eventData.customer_phone_preference + "']").click();
+                form.find("input[name='alternate_phone1_preference'][value='" + eventData.alternate_phone1_preference + "']").click();
+                form.find("input[name='alternate_phone2_preference'][value='" + eventData.alternate_phone2_preference + "']").click();
+
+                // remove properties after use
+                delete eventData.service_list;
+                delete eventData.package_list;
+                delete eventData.customer_phone_preference;
+                delete eventData.alternate_phone1_preference;
+                delete eventData.alternate_phone2_preference;
+
+                // insert existing data into form
+                form.find('h4.modal-title').html("Edit Appointment");
+                for (var property in eventData ) {
+                    form.find("[name='" + property + "']").val(eventData[property]);
+                }
+            }
+        });
+
+        form.find("[data-role*='step1']").show();
+        form.find("button[data-role='submit']").html('EDIT');
+        form.modal('show');
+    }
+};
+
+var appointmentDetailsAction = {
+    config: {
+        modalViewSelector: '#cal_viewModal',
+        modalInvoiceSelector: null,
+
+        // not include in init()
+        eventID: null
+    },
+    init: function(newSettings) {
+        $.extend(appointmentDetailsAction.config, newSettings);
+        appointmentDetailsAction.setup();
+    },
+    setup: function() { 
+        appointmentDetailsAction.config.modalViewSelector.on('click', 'a[data-role="view_invoice"]', appointmentDetailsAction.displayInvoice);
+    },
+    displayInvoice: function(event) {
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/appointments.ajax.php',
+            async: false,
+            data: { 'option': 'getInvoice', 'id': appointmentDetailsAction.config.eventID },
+            success: function(data) {
+                appointmentDetailsAction.config.modalInvoiceSelector.find(".modal-body").html(data);
+                appointmentDetailsAction.config.modalInvoiceSelector.find(".modal").modal('show');
+            }
+        });
+    }
+};
+
+
+
 var calendar = {};
 function createCalendar(elementList, calendarOptions) {
 
@@ -160,16 +429,19 @@ function createCalendar(elementList, calendarOptions) {
 		selectHelper: true,
         selectOverlap: false,
 		select: function(start, end, jsEvent, view) {
+
 			calendar.view = view.name;
             calendar.start = start;
             calendar.end = end;
 
-            if (moment().isBefore(start)) {
-                calendar.openModal('', 'create');
-            } else {
-                alert("Cannot create event in the past");
-                $(elementOps.calendarSelector).fullCalendar('unselect');
-            }
+            calendar.openModal('', 'create');
+
+            // if (moment().isBefore(start)) {
+            //     calendar.openModal('', 'create');
+            // } else {
+            //     alert("Cannot create event in the past");
+            //     $(elementOps.calendarSelector).fullCalendar('unselect');
+            // }
 		},
 		eventSources: [
             { url: elementOps.ajaxFetchEvent, allDayDefault: false },
@@ -239,6 +511,18 @@ function createCalendar(elementList, calendarOptions) {
 	$(elementOps.calendarSelector).fullCalendar(ops);
     // -------------------------- end initializing fullCalendar ----------------------
     // -------------------------- start event behavior -------------------------------
+
+    createAppointmentAction.init({
+        calendarSelector: $(elementOps.calendarSelector),
+        formCreate: $(elementOps.modalCreateSelector),
+        formCreateCustomer: $(elementOps.modalCreateCustomerSelector)
+    });
+
+    appointmentDetailsAction.init({
+        modalViewSelector: $(elementOps.modalViewSelector),
+        modalInvoiceSelector: $("#invoice_container")
+    });
+
     // open details modal
     calendar.openModal = function(id, type) {
         if (type == "details") {
@@ -254,6 +538,7 @@ function createCalendar(elementList, calendarOptions) {
     }
 
     calendar.openDetails = function() {
+        appointmentDetailsAction.config.eventID = calendar.id;
         $.ajax({
             type: 'POST',
             url: elementOps.ajaxRetrieveDescription,
@@ -270,55 +555,19 @@ function createCalendar(elementList, calendarOptions) {
     }
 
     calendar.openEdit = function() {
-        $.ajax({
-            type: 'POST',
-            url: elementOps.ajaxRetrieveDescription,
-            data: { 'id': calendar.id, 'mode': 'getInfo' },
-            async: false,
-            success: function(data) {
-                eventData = JSON.parse(data);
-                $(elementOps.modalEditSelector).find('h4.modal-title').html("Edit Appointment");
-                $(elementOps.modalEditSelector).find("input[name='appointment_id']").val(eventData.id);
-                $(elementOps.modalEditSelector).find("input[name='appointment_customer_id']").val(eventData.patient_id);
-                $(elementOps.modalEditSelector).find("input[name='customer_name']").val(eventData.first_name + " " + eventData.last_name);
-                $(elementOps.modalEditSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
-                $(elementOps.modalEditSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
-                $(elementOps.modalEditSelector).find("select[name='duration']").val(eventData.visit_duration);
-               // $(elementOps.modalEditSelector).find("input[name='color']").spectrum("set", eventData.color);
-                $(elementOps.modalEditSelector).find("input[name='customer_phone']").val(eventData.phone);
-                $(elementOps.modalEditSelector).find("input[name='customer_email']").val(eventData.email);
-                $(elementOps.modalEditSelector).find("input[name='customer_pets']").val(eventData.pets);
-
-                var services = eventData.service_list.split(",");
-                for (var i = 0; i < services.length; i++) {
-                    $(elementOps.modalEditSelector).find("select[name='service_list[]']").multiselect('widget').find(":checkbox[value='s" + services[i] + "']").click();
-                }
-                var packages = eventData.package_list.split(",");
-                for (var i = 0; i < packages.length; i++) {
-                    $(elementOps.modalEditSelector).find("select[name='service_list[]']").multiselect('widget').find(":checkbox[value='p" + packages[i] + "']").click();
-                }
-            }
-        });
-        $(elementOps.modalEditSelector).modal('show');
+        createAppointmentAction.openEditForm($(elementOps.modalEditSelector), calendar.id);
     }
 
     calendar.openCreate = function() {
-        clearEventForm(elementOps.modalCreateSelector);
-
         var duration = (calendar.end - calendar.start)/60000;
         var startDate = calendar.start.format("YYYY-MM-DD");
         var startTime = calendar.start.format("HH:mm");
-        $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create new Appointment");
 
-        $(elementOps.modalCreateSelector).find("select[name='duration']").val(duration);
-        $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(startDate);
-        $(elementOps.modalCreateSelector).find("input[name='appointment_time']").val(startTime);
-
-        $(elementOps.modalCreateSelector).modal('show');
+        createAppointmentAction.openCreateForm($(elementOps.modalCreateSelector), duration, startDate, startTime);
     }
 
     $('a[data-role="new_appointment"]').on('click', function() {
-        clearEventForm(elementOps.modalCreateSelector);
+        createAppointmentAction.resetForm($(elementOps.modalCreateSelector));
     });
 
     // change status to paid/checkin in View Appointment dialog
@@ -340,7 +589,7 @@ function createCalendar(elementList, calendarOptions) {
         $(elementOps.modalViewSelector).modal('hide');
         calendar.openModal('', 'edit');
     });
-
+/*
     // edit event
     $(elementOps.modalEditSelector).find(elementOps.btnEditSubmitSelector).on('click', function() {
         if ($(elementOps.modalEditSelector).find("input[name='appointment_id']").val() != '') {
@@ -356,7 +605,8 @@ function createCalendar(elementList, calendarOptions) {
             });
         }
     });
-
+*/
+/*
     // calendar form validation
     $(elementOps.modalCreateSelector).find('#form-appointment').validate({
         rules: {
@@ -376,51 +626,9 @@ function createCalendar(elementList, calendarOptions) {
             }
         }
     });
+*/
 
-    // grab the most 3 recent appointments when user click on Appointment History link
-    $(elementOps.modalCreateSelector).on('click', "a[href='#appointment_history']", function() {
-        var customerID = $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val();
-        var customerName = $(elementOps.modalCreateSelector).find("input[name='customer_name']").val();
-        if (customerID == '') { return false; }
-        $(elementOps.modalViewHistorySelector).find('.modal-title').html('Appointment history for ' + customerName);
-
-        $.ajax({
-            type: 'POST',
-            url: elementOps.ajaxRetrieveHistory,
-            data: { 'id': customerID, 'option': 'getAppointmentHistory' },
-            success: function(data) {
-                var jsonData = JSON.parse(data);
-                var output = "<table class='table table-hover table-striped table-bordered'>" + 
-                                "<thead>" + 
-                                    "<th class='c_table'>Appointment Number</th>" + 
-                                    "<th class='c_table'>Date/Time</th>" + 
-                                    "<th class='c_table'>Duration (minutes)</th>" + 
-                                    "<th class='c_table'>Notes</th>" + 
-                                "</thead>" + 
-                                "<tbody>";
-                if (jsonData.length == 0) {
-                    output +=   "<tr>" + 
-                                "<td colspan='4'>No appointment recorded</td>" + 
-                                "</tr>";
-                }
-                else {
-                    for(var i = 0; i < jsonData.length; i++) {
-                        console.log(jsonData[i]);
-                        output +=   "<tr data-id='" + jsonData[i].id + "'>" + 
-                                        "<td>" + jsonData[i].appointment_number + "</td>" + 
-                                        "<td>" + jsonData[i].appointment_date + " " + jsonData[i].appointment_time + "</td>" + 
-                                        "<td>" + jsonData[i].visit_duration + "</td>" + 
-                                        "<td>" + jsonData[i].doctor_notes + "</td>" + 
-                                    "</tr>";
-                    }               
-                }
-                output += "</tbody></table>";
-
-                $(elementOps.modalViewHistorySelector).find('.modal-body').html(output);
-            }
-        });
-    });
-
+/*
     // submit new event
     $(elementOps.modalCreateSelector).find(elementOps.btnCreateSubmitSelector).on('click', function() {
         if ($(elementOps.modalCreateSelector).find("input[name='appointment_id']").val() == '') {
@@ -448,7 +656,8 @@ function createCalendar(elementList, calendarOptions) {
             });
         }
     });
-
+*/
+/*
     // submit new customer
     $(elementOps.modalCreateCustomerSelector).find(elementOps.btnAddCustomerSelector).on('click', function() {
         var data = $(elementOps.modalCreateCustomerSelector).find("form").serialize();
@@ -470,7 +679,7 @@ function createCalendar(elementList, calendarOptions) {
             }
         });
     });
-
+*/
     // cancel event
     $(elementOps.modalViewSelector).find(elementOps.btnDeleteSelector).on('click', function() {
         $.ajax({
@@ -493,16 +702,12 @@ function createCalendar(elementList, calendarOptions) {
             async: false,
             success: function(data) {
                 eventData = JSON.parse(data);
-                $(elementOps.modalCreateSelector).find('h4.modal-title').html("Create New Appointment");
-                $(elementOps.modalCreateSelector).find("input[name='appointment_date']").val(eventData.appointment_date);
-                $(elementOps.modalCreateSelector).find("input[name='appointment_time']").val(eventData.appointment_time);
-                $(elementOps.modalCreateSelector).find("select[name='duration']").val(eventData.visit_duration);
+                createAppointmentAction.openCreateForm($(elementOps.modalCreateSelector), eventData.visit_duration, eventData.appointment_date, eventData.appointment_time);
             }
         });
         $(elementOps.modalViewSelector).modal('hide');
-        $(elementOps.modalCreateSelector).modal('show');
     });
-
+/*
     // autocomplete customer details
     $(elementOps.modalCreateSelector).find("input[name='customer_name']").autocomplete({
         source: elementOps.ajaxCustomerAutocomplete,
@@ -535,7 +740,7 @@ function createCalendar(elementList, calendarOptions) {
     .autocomplete("instance")._renderItem = function(ul, item) {
         return $("<li>").append("<a>" + item.label + "<br />" + item.description + "</a>").appendTo(ul);
     };
-
+*/
     // multiselect
     $(elementOps.modalCreateSelector).find("select[name='service_list[]']").multiselect({
         appendTo: elementOps.modalCreateSelector
