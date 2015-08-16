@@ -185,7 +185,11 @@ class Login {
 					if($redirect_url){
 						$redirect_page  = (Session::Get('last_visited') != '') ? Session::Get('last_visited') : 'index.php?page='.$redirect_url ;					
 					}else if($mflg == 1){
-						$redirect_page  = (Session::Get('last_visited') != '') ? Session::Get('last_visited') : 'index.php?'.$this->GetLoggedType().'=home';
+						if ($this->accountType == 'doctor') {
+							$redirect_page  = (Session::Get('last_visited') != '') ? Session::Get('last_visited') : 'index.php?'.$this->GetLoggedType().'=fullCalendar';
+						} else {
+							$redirect_page  = (Session::Get('last_visited') != '') ? Session::Get('last_visited') : 'index.php?'.$this->GetLoggedType().'=home';
+						}
 					} else {
 						$redirect_page  = (Session::Get('last_visited') != '') ? Session::Get('last_visited') : 'index.php?'.$this->GetLoggedType().'=setup';
 					}

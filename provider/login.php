@@ -53,15 +53,9 @@ if(!$objLogin->IsLoggedIn() && ModulesSettings::Get('doctors', 'allow_login') ==
 <!--	<div class="pages_contents">-->
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <div class="main" id="login_main">
-
-            
-	
-
 		<div class="box">
 			<h2>Login to petjolly</h2>            
-            
 			<h3>Please enter your name and password to log in.</h3>
-			
 			<form class="form" action="index.php?provider=login" method="post" autocomplete="off">
             <?php draw_hidden_field('submit_login', 'login'); ?>
 

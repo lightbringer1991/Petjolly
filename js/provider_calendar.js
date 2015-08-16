@@ -15,7 +15,7 @@
  *  Fullcalendar 2.2.6
  *	Released Under Envato Regular or Extended Licenses
  */
- function clearEventForm(form) {
+function clearEventForm(form) {
 	$(form).find('button[type="submit"]').html("Add Event");
 	$(form).find('input[type="text"]').val('');
     $(form).find('input[type="hidden"]').val('');
@@ -37,7 +37,7 @@ function getTimeOff(url, start, end) {
             result = JSON.parse(data);
         }
     });
-    return result;
+    return $result;
 }
 
 var createAppointmentAction = {
@@ -52,7 +52,8 @@ var createAppointmentAction = {
         ajaxEventSave: 'ajax/calendar.ajax.php?option=createEvent',
         ajaxEventEdit: 'ajax/calendar.ajax.php?option=editEvent',
         ajaxRetrieveDescription: 'ajax/calendar.ajax.php?option=eventDescription',
-        ajaxAddCustomer: 'ajax/calendar.ajax.php?option=createCustomer'
+        ajaxAddCustomer: 'ajax/calendar.ajax.php?option=createCustomer',
+        ajaxRetrievePetDetails: 'ajax/calendar.ajax.php?option=petDetails'
     },
     init: function(newSettings) {
         $.extend(createAppointmentAction.config, newSettings);
@@ -62,6 +63,7 @@ var createAppointmentAction = {
         // initialize display
         createAppointmentAction.config.formCreate.find("[data-role='step1_2']").hide();
         createAppointmentAction.config.formCreate.find("[data-role*='step2']").hide();
+        createAppointmentAction.config.formCreate.find("form").validate(createAppointmentAction.validateCreate);
 
         // ----- step 1 event handlers
         // action taken if user click on Next button
@@ -109,7 +111,6 @@ var createAppointmentAction = {
         // submit new event / edit existing event
         createAppointmentAction.config.formCreate.on('click', "button[data-role='submit']", createAppointmentAction.submitForm);
 
-
         // ----- create new customer
         createAppointmentAction.config.formCreateCustomer.on('click', "[data-role='calendar-customer-submit']", createAppointmentAction.submitCustomerForm);
     },
@@ -118,8 +119,22 @@ var createAppointmentAction = {
         createAppointmentAction.config.formCreate.find("[data-role*='step1']").show();
     },
     displayStep2: function(event) {
+        if (!createAppointmentAction.config.formCreate.find("form").valid()) { return false; }
         var petID = createAppointmentAction.config.formCreate.find("input[name='pet_id']").val();
         if (petID == '') { return false; }          // user cannot click next if no pet is selected
+
+        // fill in disabled fields
+        $.ajax({
+            type: 'POST',
+            url: createAppointmentAction.config.ajaxRetrievePetDetails,
+            data: { 'id': petID },
+            success: function(data) {
+                var jsonData = JSON.parse(data);
+                createAppointmentAction.config.formCreate.find("input[name='pet_name_disabled']").val(jsonData.name);
+                createAppointmentAction.config.formCreate.find("input[name='pet_breed_disabled']").val(jsonData.breed);
+                createAppointmentAction.config.formCreate.find("input[name='customer_name_disabled']").val(jsonData.customerName);
+            }
+        });
 
         // get appointment history
         $.ajax({
@@ -166,25 +181,14 @@ var createAppointmentAction = {
         if (createAppointmentAction.config.formCreate.find("input[name='appointment_id']").val() != '') {
             ajaxURL = createAppointmentAction.config.ajaxEventEdit;
         }
-
-        // check if a pet is selected
-        if (createAppointmentAction.config.formCreate.find("input[name='pet_id']").val() == '') {
-            alert("Invalid pet");
-            return false;
-        }
-
-        //check if any service or package is selected
-        if (createAppointmentAction.config.formCreate.find("select[name='service_list[]']").multiselect('getChecked').length == 0) {
-            alert("Please select at least 1 service or 1 package");
-            return false;
-        }
+        if (!createAppointmentAction.validateCreateForm()) { return false; }
 
         var data = createAppointmentAction.config.formCreate.find('form').serializeArray();
         $.ajax({
             type: 'POST',
             url: ajaxURL,
             data: data,
-            success: function() {
+            success: function(data) {
                 createAppointmentAction.config.formCreate.modal('hide');
                 clearEventForm(createAppointmentAction.config.formCreate);
                 createAppointmentAction.config.formCreate.find("[data-role*='step2']").hide();
@@ -195,8 +199,9 @@ var createAppointmentAction = {
         });
     },
     submitCustomerForm: function(event) {
-        var data = createAppointmentAction.config.formCreateCustomer.find("form").serialize();
+        if (!createAppointmentAction.validateCustomerForm()) { return false; }
 
+        var data = createAppointmentAction.config.formCreateCustomer.find("form").serialize();
         $.ajax({
             type: 'POST',
             url: createAppointmentAction.config.ajaxAddCustomer,
@@ -212,6 +217,88 @@ var createAppointmentAction = {
                 createAppointmentAction.config.formCreate.find("[name='pet_id']").trigger('change');
             }
         });
+    },
+    validateCreateForm: function() {
+        // check if a pet is selected
+        if (createAppointmentAction.config.formCreate.find("input[name='pet_id']").val() == '') {
+            alert("Invalid pet");
+            return false;
+        }
+
+        //check if any service or package is selected
+        if (createAppointmentAction.config.formCreate.find("select[name='service_list[]']").multiselect('getChecked').length == 0) {
+            alert("Please select at least 1 service or 1 package");
+            return false;
+        }
+
+        if (createAppointmentAction.config.formCreate.find("input[name='appointment_date']").val() == '') {
+            alert("Please enter appointment date");
+            return false;
+        }
+        if (createAppointmentAction.config.formCreate.find("input[name='appointment_time']").val() == '') {
+            alert("Please enter appointment time");
+            return false;
+        }
+        return true;
+    },
+    validateCustomerForm: function() {
+        if (createAppointmentAction.config.formCreateCustomer.find("input[name='customer_fname']").val() == '') {
+            alert("Please enter customer first name");
+            return false;
+        }
+        if (createAppointmentAction.config.formCreateCustomer.find("input[name='customer_lname']").val() == '') {
+            alert("Please enter customer last name");
+            return false;
+        }
+
+        var number = createAppointmentAction.config.formCreateCustomer.find("input[name='customer_phone']").val();
+        var raw_number = number.replace(/[^0-9]/g,'');
+        var phone_regex = /^1?([2-9]..)([2-9]..)(....)$/;
+        if (number == '') {
+            alert("Please enter customer phone");
+            return false;
+        } else if (!phone_regex.test(raw_number)) {
+            alert("Please enter a valid US phone number");
+            return false;
+        }
+
+        var email = createAppointmentAction.config.formCreateCustomer.find("input[name='customer_email']").val();
+        var email_regex = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        if (createAppointmentAction.config.formCreateCustomer.find("input[name='customer_email']").val() == '') {
+            alert("Please enter customer email");
+            return false;
+        } else if (!email_regex.test(email)) {
+            alert("Please enter a valid email");
+            return false;
+        }
+
+        if (createAppointmentAction.config.formCreateCustomer.find("input[name='pet_name']").val() == '') {
+            alert("Please enter pet name");
+            return false;
+        }
+        if (createAppointmentAction.config.formCreateCustomer.find("input[name='pet_breed']").val() == '') {
+            alert("Please enter pet breed");
+            return false;
+        }
+        return true;
+    },
+    validateCreate: {
+        rules: {
+            alternate_phone1: {
+                phoneUS: true
+            },
+            alternate_phone2: {
+                phoneUS: true
+            }
+        },
+        messages: {
+            alternate_phone1: {
+                phoneUS: "Please enter a valid US phone number"
+            },
+            alternate_phone2: {
+                phoneUS: "Please enter a valid US phone number"
+            }
+        }
     },
     // static functions, can be used without init()
     resetForm: function(form) {
@@ -589,97 +676,6 @@ function createCalendar(elementList, calendarOptions) {
         $(elementOps.modalViewSelector).modal('hide');
         calendar.openModal('', 'edit');
     });
-/*
-    // edit event
-    $(elementOps.modalEditSelector).find(elementOps.btnEditSubmitSelector).on('click', function() {
-        if ($(elementOps.modalEditSelector).find("input[name='appointment_id']").val() != '') {
-            var data = $(elementOps.modalEditSelector).find("form").serialize();
-            $.ajax({
-                type: 'POST',
-                url: elementOps.ajaxEventEdit,
-                data: data,
-                success: function() {
-                    $(elementOps.modalEditSelector).modal('hide');
-                    $(elementOps.calendarSelector).fullCalendar('refetchEvents');
-                }
-            });
-        }
-    });
-*/
-/*
-    // calendar form validation
-    $(elementOps.modalCreateSelector).find('#form-appointment').validate({
-        rules: {
-            customer_phone: {
-                required: true
-            },
-            'service_list[]': {
-                required: true
-            }
-        },
-        messages: {
-            customer_phone: {
-                required: "Please enter customer name"
-            },
-            'service_list[]': {
-                required: true
-            }
-        }
-    });
-*/
-
-/*
-    // submit new event
-    $(elementOps.modalCreateSelector).find(elementOps.btnCreateSubmitSelector).on('click', function() {
-        if ($(elementOps.modalCreateSelector).find("input[name='appointment_id']").val() == '') {
-            if ($(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val() == '') {
-                alert("Invalid customer");
-                return false;
-            }
-            //check if any service or package is selected
-            if ($(elementOps.modalCreateSelector).find("select[name='service_list[]']").multiselect('getChecked').length == 0) {
-                alert("Please select at least 1 service or 1 package");
-                return false;
-            }
-
-            var data = $(elementOps.modalCreateSelector).find("form").serializeArray();
-            // data.color = $(elementOps.modalCreateSelector).find("input[name='color']").val();
-            $.ajax({
-                type: 'POST',
-                url: elementOps.ajaxEventSave,
-                data: data,
-                success: function() {
-                    $(elementOps.modalCreateSelector).modal('hide');
-                    clearEventForm(elementOps.modalCreateSelector);
-                    $(elementOps.calendarSelector).fullCalendar('refetchEvents');
-                }
-            });
-        }
-    });
-*/
-/*
-    // submit new customer
-    $(elementOps.modalCreateCustomerSelector).find(elementOps.btnAddCustomerSelector).on('click', function() {
-        var data = $(elementOps.modalCreateCustomerSelector).find("form").serialize();
-        var fname = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_fname']").val();
-        var lname = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_lname']").val();
-        var phone = $(elementOps.modalCreateCustomerSelector).find("input[name='customer_phone']").val();
-        var pet_name = $(elementOps.modalCreateCustomerSelector).find("input[name='pet_name']").val();
-
-        $.ajax({
-            type: 'POST',
-            url: elementOps.ajaxAddCustomer,
-            data: data,
-            success: function(response) {
-                $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val(response);
-                $(elementOps.modalCreateSelector).find("input[name='customer_name']").val(fname + " " + lname);
-                $(elementOps.modalCreateSelector).find("input[name='customer_phone']").val(phone);
-                $(elementOps.modalCreateSelector).find("input[name='customer_pets']").val(pet_name);
-                $(elementOps.modalCreateCustomerSelector).modal('hide');
-            }
-        });
-    });
-*/
     // cancel event
     $(elementOps.modalViewSelector).find(elementOps.btnDeleteSelector).on('click', function() {
         $.ajax({
@@ -707,40 +703,7 @@ function createCalendar(elementList, calendarOptions) {
         });
         $(elementOps.modalViewSelector).modal('hide');
     });
-/*
-    // autocomplete customer details
-    $(elementOps.modalCreateSelector).find("input[name='customer_name']").autocomplete({
-        source: elementOps.ajaxCustomerAutocomplete,
-        appendTo: elementOps.modalCreateSelector,
-        focus: function(event, ui) {
-            // prevent autocomplete from updating the textbox
-            event.preventDefault();
-            return false;
-        },
-        select: function(event, ui) {
-            // prevent autocomplete from updating the textbox
-            event.preventDefault();
-            // manually update the textbox and hidden field
-            $(this).val(ui.item.label);
-            $(elementOps.modalCreateSelector).find("input[name='appointment_customer_id']").val(ui.item.value);
-            $(elementOps.modalCreateSelector).find("input[name='customer_phone']").val(ui.item.phone);
-            $(elementOps.modalCreateSelector).find("input[name='customer_email']").val(ui.item.email);
-            $(elementOps.modalCreateSelector).find("input[name='customer_pets']").val(ui.item.pets);
-            return false;
-        },
-        response: function(event, ui) {
-            if (ui.content.length === 0) {
-                $("div[data-class='customer_error']").html("No customer found");
-                $("input[name='c_id']").val("");
-            } else {
-                $("div[data-class='customer_error']").empty();
-            }
-        }
-    })
-    .autocomplete("instance")._renderItem = function(ul, item) {
-        return $("<li>").append("<a>" + item.label + "<br />" + item.description + "</a>").appendTo(ul);
-    };
-*/
+
     // multiselect
     $(elementOps.modalCreateSelector).find("select[name='service_list[]']").multiselect({
         appendTo: elementOps.modalCreateSelector

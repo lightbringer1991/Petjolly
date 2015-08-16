@@ -36,13 +36,13 @@ switch ($option) {
                 'alternate_name2' => $event[0]['alternate_name2'],
                 'alternate_phone2' => $event[0]['alternate_phone2'],
                 'alternate_phone2_preference' => (int)$event[0]['alternate_SMS2'] == 1 ? 'sms' : 'phone',
-                'customer_notes' => $event[0]['doctor_notes'],
+                'customer_notes' => $event[0]['patient_notes'],
                 'service_list' => $event[0]['service_list'],
                 'package_list' => $event[0]['package_list'],
                 'appointment_date' => $event[0]['appointment_date'],
                 'appointment_time' => $event[0]['appointment_time'],
                 'duration' => $event[0]['visit_duration'],
-                'pet_notes' => $event[0]['patient_notes']
+                'pet_notes' => $event[0]['notes']
             );
 
             echo json_encode($output);
@@ -176,8 +176,7 @@ switch ($option) {
             'alternate_name2'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
             'alternate_phone2'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
             'alternate_SMS2'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
-            'doctor_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
-            'patient_notes'         => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
+            'patient_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : ''
         );
 
         $sql = "UPDATE `meda_appointments` SET ";
@@ -188,6 +187,12 @@ switch ($option) {
         $sql .= " WHERE `id`=$app_id";
 
         database_void_query($sql);
+
+        // update pet notes
+        $petNotes = isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : '';
+        $sql = "UPDATE `meda_pets` SET `notes`='$petNotes' WHERE `id`={$_POST['pet_id']}";
+        database_void_query($sql);
+
         break;
     case "createEvent":
         // get services and packages ids
@@ -215,7 +220,7 @@ switch ($option) {
             'alternate2_name'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
             'alternate2_phone'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
             'alternate2_sms'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
-            'doctor_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
+            'patient_notes'         => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
             'pet_notes'             => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
         ));
         break;
@@ -319,6 +324,21 @@ switch ($option) {
             'customer_email' => $customerDetails['email'],
             'pet_id' => $newPet -> getId(),
             'pet_name' => $newPet -> getName()
+        );
+        echo json_encode($output);
+        break;
+    case "petDetails":
+        $id = isset($_POST['id']) ? mysqli_real_escape_string($database_connection, $_POST['id']) : '';
+        $sql = "SELECT `p`.`name`, `p`.`breed`, `c`.`first_name`, `c`.`last_name` 
+                    FROM `meda_pets` AS `p`
+                    LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
+                    WHERE `p`.`id`=$id";
+        $result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+
+        $output = array(
+            'name' => $result[0]['name'],
+            'breed' => $result[0]['breed'],
+            'customerName' => $result[0]['first_name'] . ' ' . $result[0]['last_name']
         );
         echo json_encode($output);
         break;

@@ -294,7 +294,6 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                         <input name="status" type="radio" value="5" /> No Show <br />
                         <input name="status" type="radio" value="0" style="display: none;" />
                     </form>
-                    <a href='#' data-role='view_invoice'>Invoice</a>
                 </div>
             </div>
         </div>
@@ -302,6 +301,7 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
             <a href="#" class="btn btn-danger" data-option="remove">Cancel</a>
             <a href="#" class="btn btn-info" data-option="add-new">Add New</a>
             <a href="#" class="btn btn-info" data-option="edit">Edit</a>
+            <a href='#' class="btn btn-info" data-role='view_invoice'>Invoice</a>
         	<a href="#" class="btn btn-default" data-dismiss="modal">Close</a>
         </div>
         </div>
@@ -563,6 +563,34 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                         </fieldset>
                     </div>
                     <div data-role='step2'>
+                        <fieldset>
+                            <table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="pet_name_disabled">Pet Name</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input type="text" name="pet_name_disabled" class="mgrid_text" dir="ltr" maxlength="70" style="width:220px;" disabled='disabled' />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="pet_breed_disabled">Pet Breed</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input type="text" name="pet_breed_disabled" class="mgrid_text" dir="ltr" maxlength="70" style="width:220px;" disabled='disabled' />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="25%" align="left">
+                                        <label for="customer_name_disabled">Customer Name</label>
+                                    </td>
+                                    <td style="text-align:left;padding-left:6px;">
+                                        <input type="text" name="customer_name_disabled" class="mgrid_text" dir="ltr" maxlength="70" style="width:220px;" disabled='disabled' />
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
                         <div class="row">
                         <div class="col-md-5 col-xs-5 col-lg-5">
                             <fieldset>
@@ -727,7 +755,10 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                     <label for="pet_type">Type <span class="required">*</span>:</label>
                                 </td>
                                 <td style="text-align:left;padding-left:6px;">
-                                    <input name="pet_type" class="mgrid_text" dir="ltr" maxlength="70" value='' style="width:250px;" />
+                                    <select name="pet_type" style="width:250px;">
+                                        <option value="dog">dog</option>
+                                        <option value="cat">cat</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
