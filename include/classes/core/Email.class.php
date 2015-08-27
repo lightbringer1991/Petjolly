@@ -184,7 +184,8 @@ class Email{
 			// removes Sent-by
 			$additional_parameters = '-f '.$this->from;	
 			// try to send the email message
-			return @mail($this->to, $this->subject, $the_body, $headers, $additional_parameters);			
+//			return @mail($this->to, $this->subject, $the_body, $headers, $additional_parameters);			
+			return mail($this->to, $this->subject, $the_body, $headers, $additional_parameters);
 		}else{
 			// another version for some public hostings
 			// to send HTML mail, the Content-type header must be set

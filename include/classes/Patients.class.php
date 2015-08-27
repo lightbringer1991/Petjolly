@@ -1,47 +1,26 @@
 <?php
 
 /**
-
  *	Class Patients 
-
  *  -------------- 
-
  *  Description : encapsulates patients methods and properties
-
  *	Written by  : ApPHP
-
  *	Version     : 1.0.0
-
  *  Updated	    : 02.03.2011
-
  *  Usage       : MedicalAppointment
-
  *	
-
  *	PUBLIC				  	STATIC				 	PRIVATE
-
  * 	------------------	  	---------------     	---------------
-
  *	__construct			  	SendPassword                                  
-
  *	__destruct            	Reactivate                          
-
  *	BeforeEditRecord        DrawLoginFormBlock
-
  *	AfterEditRecord         GetPatientInfo
-
  *	BeforeUpdateRecord      AwaitingAprovalCount
-
  *	AfterUpdateRecord       
-
  *	AfterAddRecord
-
  *	AfterInsertRecord
-
  *	GetAllPatients
-
  *	
-
  **/
 
  /*
@@ -1599,7 +1578,23 @@ class Patients extends MicroGrid {
 
 	}
 
+	// $params = array(<field> => <value>)
+	// values must be sanitized before hand
+	public static function updatePatientDetails($id, $params) {
+		$sql = "UPDATE `" . TABLE_PATIENTS . "` SET ";
+		foreach ($params as $k => $v) {
+			$sql .= "`$k`='$v', ";
+		}
+		$sql = substr($sql, 0, -2);					// remove ", "
+		$sql .= " WHERE `id`=$id";
 
+		database_void_query($sql);
+	}
+
+	public static function getPatientDataById($id) {
+		$sql = "SELECT * FROM `" . TABLE_PATIENTS . "` WHERE `id`=$id";
+		return database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+	}
 
 
 

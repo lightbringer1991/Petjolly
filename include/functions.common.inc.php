@@ -670,13 +670,13 @@ function send_email($recipient, $sender, $email_template, $replace_holders = arr
 		$objEmail->textOnly = false;
 		$objEmail->content = $html_version;	
 		$result = $objEmail->Send();
-		
+
 		if($cc_email != ''){
 			if($cc_subject != '') $subject = $cc_subject;
 			$objEmail = new Email($cc_email, $sender, $subject); 				
 			$objEmail->textOnly = false;
 			$objEmail->content = $html_version;	
-			$result = $objEmail->Send();		
+			$result = $objEmail->Send();
 		}		
 	}
 	

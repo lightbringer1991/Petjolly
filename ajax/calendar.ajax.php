@@ -28,14 +28,17 @@ switch ($option) {
                 'pet_name' => $event[0]['name'],
                 'customer_name' => $event[0]['first_name'] . " " . $event[0]['last_name'],
                 'customer_phone' => $event[0]['phone'],
-                'customer_phone_preference' => (int)$event[0]['phone_SMS'] == 1 ? 'sms' : 'phone',
+                'customer_phone_sms' => $event[0]['phone_SMS'],
+                'customer_cellphone' => $event[0]['cellphone'],
+                'customer_cellphone_sms' => $event[0]['cellphone_SMS'],
                 'customer_email' => $event[0]['email'],
                 'alternate_name1' => $event[0]['alternate_name1'],
-                'alternate_phone1' => $event[0]['alternate_phone1'],
-                'alternate_phone1_preference' => (int)$event[0]['alternate_SMS1'] == 1 ? 'sms' : 'phone',
+                'customer_alternate_phone1' => $event[0]['alternate_phone1'],
+                'customer_alternate_phone1_sms' => $event[0]['alternate_SMS1'],
+                'communication_preference' => ($event[0]['communication_preference'] != '') ? $event[0]['communication_preference'] : 'phone',
                 'alternate_name2' => $event[0]['alternate_name2'],
-                'alternate_phone2' => $event[0]['alternate_phone2'],
-                'alternate_phone2_preference' => (int)$event[0]['alternate_SMS2'] == 1 ? 'sms' : 'phone',
+                'customer_alternate_phone2' => $event[0]['alternate_phone2'],
+                'customer_alternate_phone2_sms' => $event[0]['alternate_SMS2'],
                 'customer_notes' => $event[0]['patient_notes'],
                 'service_list' => $event[0]['service_list'],
                 'package_list' => $event[0]['package_list'],
@@ -169,13 +172,6 @@ switch ($option) {
             'patient_id'            => isset($_POST['pet_id']) ? mysqli_real_escape_string($database_connection, $_POST['pet_id']) : 0,
             'service_list'          => implode(',', $service_list),
             'package_list'          => implode(',', $package_list),
-            'phone_SMS'             => (isset($_POST['customer_phone_preference']) && ($_POST['customer_phone_preference'] == 'sms')) ? 1 : 0,
-            'alternate_name1'       => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
-            'alternate_phone1'      => isset($_POST['alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone1']) : '',
-            'alternate_SMS1'        => (isset($_POST['alternate_phone1_preference']) && ($_POST['alternate_phone1_preference'] == 'sms')) ? 1 : 0,
-            'alternate_name2'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
-            'alternate_phone2'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
-            'alternate_SMS2'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
             'patient_notes'          => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : ''
         );
 
@@ -187,6 +183,21 @@ switch ($option) {
         $sql .= " WHERE `id`=$app_id";
 
         database_void_query($sql);
+
+        // update customer fields
+        $petList = Pets::getAllPetsByCondition('id', $_POST['pet_id']);
+        Patients::updatePatientDetails($petList[0] -> getCustomerId(), array(
+            'communication_preference'  => isset($_POST['communication_preference']) ? mysqli_real_escape_string($database_connection, $_POST['communication_preference']) : 'phone',
+            'phone_SMS'                 => (isset($_POST['customer_phone_sms']) && ($_POST['customer_phone_sms'] == 'on')) ? 1 : 0,
+            'cellphone_SMS'             => (isset($_POST['customer_cellphone_sms']) && ($_POST['customer_cellphone_sms'] == 'on')) ? 1 : 0,
+            'alternate_name1'           => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
+            'alternate_phone1'          => isset($_POST['customer_alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['customer_alternate_phone1']) : '',
+            'alternate_SMS1'            => (isset($_POST['customer_alternate_phone1_sms']) && ($_POST['customer_alternate_phone1_sms'] == 'on')) ? 1 : 0,
+            'alternate_name2'           => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
+            'alternate_phone2'          => isset($_POST['customer_alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['customer_alternate_phone2']) : '',
+            'alternate_SMS2'            => (isset($_POST['customer_alternate_phone2_sms']) && ($_POST['customer_alternate_phone2_sms'] == 'on')) ? 1 : 0,
+        ));
+
 
         // update pet notes
         $petNotes = isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : '';
@@ -205,24 +216,32 @@ switch ($option) {
         }
 
         Appointments::DoAppointment(array(
-            'docid'                 => $doc_id,
-            'date'                  => isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '',
-            'start_time'            => isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '',
-            'duration'              => isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '',
-            'patient_id'            => isset($_POST['pet_id']) ? mysqli_real_escape_string($database_connection, $_POST['pet_id']) : 0,
-            'service_list'          => implode(',', $service_list),
-            'package_list'          => implode(',', $package_list),
-            'color'                 => $statusColor[1],
-            'customer_phone_sms'    => (isset($_POST['customer_phone_preference']) && ($_POST['customer_phone_preference'] == 'sms')) ? 1 : 0,
-            'alternate1_name'       => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
-            'alternate1_phone'      => isset($_POST['alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone1']) : '',
-            'alternate1_sms'        => (isset($_POST['alternate_phone1_preference']) && ($_POST['alternate_phone1_preference'] == 'sms')) ? 1 : 0,
-            'alternate2_name'       => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
-            'alternate2_phone'      => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
-            'alternate2_sms'        => (isset($_POST['alternate_phone2_preference']) && ($_POST['alternate_phone2_preference'] == 'sms')) ? 1 : 0,
-            'patient_notes'         => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
-            'pet_notes'             => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
+            'doctor_id'                 => $doc_id,
+            'appointment_date'          => isset($_POST['appointment_date']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_date']) : '',
+            'appointment_time'          => isset($_POST['appointment_time']) ? mysqli_real_escape_string($database_connection, $_POST['appointment_time']) : '',
+            'visit_duration'            => isset($_POST['duration']) ? mysqli_real_escape_string($database_connection, $_POST['duration']) : '',
+            'patient_id'                => isset($_POST['pet_id']) ? mysqli_real_escape_string($database_connection, $_POST['pet_id']) : 0,
+            'service_list'              => implode(',', $service_list),
+            'package_list'              => implode(',', $package_list),
+            'color'                     => $statusColor[1],
+            'patient_notes'             => isset($_POST['customer_notes']) ? mysqli_real_escape_string($database_connection, $_POST['customer_notes']) : '',
+            'pet_notes'                 => isset($_POST['pet_notes']) ? mysqli_real_escape_string($database_connection, $_POST['pet_notes']) : ''
         ));
+    
+        // update customer fields
+        $petList = Pets::getAllPetsByCondition('id', $_POST['pet_id']);
+        Patients::updatePatientDetails($petList[0] -> getCustomerId(), array(
+            'communication_preference'  => isset($_POST['communication_preference']) ? $_POST['communication_preference'] : 'phone',
+            'phone_SMS'                 => (isset($_POST['customer_phone_sms']) && ($_POST['customer_phone_sms'] == 'on')) ? 1 : 0,
+            'cellphone_SMS'             => (isset($_POST['customer_cellphone_sms']) && ($_POST['customer_cellphone_sms'] == 'on')) ? 1 : 0,
+            'alternate_name1'           => isset($_POST['alternate_name1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name1']) : '',
+            'alternate_phone1'          => isset($_POST['alternate_phone1']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone1']) : '',
+            'alternate_SMS1'            => (isset($_POST['customer_alternate_phone1_sms']) && ($_POST['customer_alternate_phone1_sms'] == 'on')) ? 1 : 0,
+            'alternate_name2'           => isset($_POST['alternate_name2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_name2']) : '',
+            'alternate_phone2'          => isset($_POST['alternate_phone2']) ? mysqli_real_escape_string($database_connection, $_POST['alternate_phone2']) : '',
+            'alternate_SMS2'            => (isset($_POST['customer_alternate_phone2_sms']) && ($_POST['customer_alternate_phone2_sms'] == 'on')) ? 1 : 0,
+        ));
+
         break;
     case "deleteEvent":
         $id = isset($_POST['id']) ? mysqli_real_escape_string($database_connection, $_POST['id']) : '';

@@ -485,10 +485,24 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                         <input type="text" name="customer_phone" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="customer_phone_preference" value="phone">
+                                        <input type="radio" name="communication_preference" value="phone" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="customer_phone_preference" value="sms">
+                                        <input type="checkbox" name="customer_phone_sms" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="customer_cellphone">Customer Mobile Number:</label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="customer_cellphone" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="communication_preference" value="cellphone" />
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="customer_cellphone_sms" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -513,21 +527,21 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                 </tr>
                                 <tr>
                                     <td>
-                                        <label for="alternate_phone1">Alternate1 Phone:</label>
+                                        <label for="customer_alternate_phone1">Alternate1 Phone:</label>
                                     </td>
                                     <td>
-                                        <input type="text" name="alternate_phone1" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                        <input type="text" name="customer_alternate_phone1" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="alternate_phone1_preference" value="phone">
+                                        <input type="radio" name="communication_preference" value="alternate_phone1" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="alternate_phone1_preference" value="sms">
+                                        <input type="checkbox" name="customer_alternate_phone1_sms" />
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <label for="alternate_name2">Alternate1 Name:</label>
+                                        <label for="alternate_name2">Alternate2 Name:</label>
                                     </td>
                                     <td>
                                         <input type="text" name="alternate_name2" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
@@ -537,16 +551,16 @@ if($objLogin->IsLoggedInAsDoctor() && Modules::IsModuleInstalled('appointments')
                                 </tr>
                                 <tr>
                                     <td>
-                                        <label for="alternate_phone2">Alternate1 Phone:</label>
+                                        <label for="customer_alternate_phone2">Alternate2 Phone:</label>
                                     </td>
                                     <td>
-                                        <input type="text" name="alternate_phone2" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
+                                        <input type="text" name="customer_alternate_phone2" class="mgrid_text" dir="ltr" maxlength="70" style="width:250px;" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="alternate_phone2_preference" value="phone">
+                                        <input type="radio" name="communication_preference" value="alternate_phone2" />
                                     </td>
                                     <td>
-                                        <input type="radio" name="alternate_phone2_preference" value="sms">
+                                        <input type="checkbox" name="customer_alternate_phone2_sms" />
                                     </td>
                                 </tr>
                                 <tr>

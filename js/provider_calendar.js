@@ -184,6 +184,7 @@ var createAppointmentAction = {
         if (!createAppointmentAction.validateCreateForm()) { return false; }
 
         var data = createAppointmentAction.config.formCreate.find('form').serializeArray();
+
         $.ajax({
             type: 'POST',
             url: ajaxURL,
@@ -340,16 +341,19 @@ var createAppointmentAction = {
                 }
 
                 // select preferences
-                form.find("input[name='customer_phone_preference'][value='" + eventData.customer_phone_preference + "']").click();
-                form.find("input[name='alternate_phone1_preference'][value='" + eventData.alternate_phone1_preference + "']").click();
-                form.find("input[name='alternate_phone2_preference'][value='" + eventData.alternate_phone2_preference + "']").click();
+                form.find("input[name='communication_preference'][value='" + eventData.communication_preference + "']").click();
+                if (eventData.customer_phone_sms == 1) { form.find("input[name='customer_phone_sms']").prop('checked', true); }
+                if (eventData.customer_cellphone_sms == 1) { form.find("input[name='customer_cellphone_sms']").prop('checked', true); }
+                if (eventData.customer_alternate_phone1_sms == '1') { form.find("input[name='customer_alternate_phone1_sms']").prop('checked', true); }
+                if (eventData.customer_alternate_phone2_sms == '1') { form.find("input[name='customer_alternate_phone2_sms']").prop('checked', true); }
 
                 // remove properties after use
                 delete eventData.service_list;
                 delete eventData.package_list;
-                delete eventData.customer_phone_preference;
-                delete eventData.alternate_phone1_preference;
-                delete eventData.alternate_phone2_preference;
+                delete eventData.customer_phone_sms;
+                delete eventData.customer_cellphone_sms;
+                delete eventData.customer_alternate_phone1_sms;
+                delete eventData.customer_alternate_phone2_sms;
 
                 // insert existing data into form
                 form.find('h4.modal-title').html("Edit Appointment");

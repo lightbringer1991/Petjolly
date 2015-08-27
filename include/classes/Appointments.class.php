@@ -1758,12 +1758,12 @@ class Appointments extends MicroGrid {
 
         }
 
-		$docid = isset($params['docid']) ? $params['docid'] : '';		
+		$docid = isset($params['doctor_id']) ? $params['doctor_id'] : '';		
 		$schid = isset($params['schid']) ? $params['schid'] : '';
 		$daddid = isset($params['daddid']) ? $params['daddid'] : '';
-		$date = isset($params['date']) ? $params['date'] : '0000-00-00';
-		$start_time = isset($params['start_time']) ? str_replace('-', ':', $params['start_time']) : '00:00:00';
-		$duration = isset($params['duration']) ? $params['duration'] : '';
+		$date = isset($params['appointment_date']) ? $params['appointment_date'] : '0000-00-00';
+		$start_time = isset($params['appointment_time']) ? str_replace('-', ':', $params['appointment_time']) : '00:00:00';
+		$duration = isset($params['visit_duration']) ? $params['visit_duration'] : '';
 		$dspecid = isset($params['dspecid']) ? $params['dspecid'] : '';
         $insid = isset($params['insid']) ? $params['insid'] : '';
         $vrid = isset($params['vrid']) ? $params['vrid'] : '';
@@ -1780,7 +1780,7 @@ class Appointments extends MicroGrid {
         	'id' 										=> null,
         	'appointment_number'						=> strtoupper(get_random_string(10)),
 			'appointment_description'					=> 'Appointment for pet services',
-        	'doctor_id' 								=> isset($params['docid']) ? $params['docid'] : '',
+        	'doctor_id' 								=> isset($params['doctor_id']) ? $params['doctor_id'] : '',
         	'doctor_speciality_id'						=> isset($params['dspecid']) ? $params['dspecid'] : '',
         	'doctor_address_id'							=> isset($params['daddid']) ? $params['daddid'] : '',
         	'service_list' 								=> $service_list,
@@ -1788,19 +1788,12 @@ class Appointments extends MicroGrid {
         	'color'										=> isset($params['color']) ? $params['color'] : '',
         	'patient_id'								=> isset($params['patient_id']) ? $params['patient_id'] : '',
         	'date_created'								=> date('Y-m-d H:i:s'),
-        	'appointment_date'							=> isset($params['date']) ? $params['date'] : '0000-00-00',
-        	'appointment_time'							=> isset($params['start_time']) ? str_replace('-', ':', $params['start_time']) : '00:00:00',
-        	'visit_duration'							=> isset($params['duration']) ? $params['duration'] : 0,
+        	'appointment_date'							=> isset($params['appointment_date']) ? $params['appointment_date'] : '0000-00-00',
+        	'appointment_time'							=> isset($params['appointment_time']) ? str_replace('-', ':', $params['appointment_time']) : '00:00:00',
+        	'visit_duration'							=> isset($params['visit_duration']) ? $params['visit_duration'] : 0,
         	'visit_price' 								=> self::calculatePrice($service_list, $package_list),
         	'doctor_notes'								=> '',
         	'patient_notes' 							=> isset($params['patient_notes']) ? $params['patient_notes'] : '',
-        	'phone_SMS'									=> isset($params['customer_phone_sms']) ? $params['customer_phone_sms'] : 0,
-        	'alternate_name1'							=> isset($params['alternate1_name']) ? $params['alternate1_name'] : '',
-        	'alternate_phone1'							=> isset($params['alternate1_phone']) ? $params['alternate1_phone'] : '',
-        	'alternate_name2' 							=> isset($params['alternate2_name']) ? $params['alternate2_name'] : '',
-        	'alternate_phone2'							=> isset($params['alternate2_phone']) ? $params['alternate2_phone'] : '',
-        	'alternate_SMS1' 							=> isset($params['alternate1_sms']) ? $params['alternate1_sms'] : 0,
-        	'alternate_SMS2' 							=> isset($params['alternate2_sms']) ? $params['alternate2_sms'] : 0,
         	'for_whom'									=> isset($params['for_whom']) ? $params['for_whom'] : '',
         	'first_visit'								=> isset($params['first_visit']) ? $params['first_visit'] : '',
         	'insurance_id'								=> isset($params['insid']) ? $params['insid'] : '',
@@ -2865,12 +2858,12 @@ class Appointments extends MicroGrid {
 	public static function getAppointmentById($id) {
 		$sql = "SELECT `a`.`id`, `a`.`appointment_number`, `a`.`appointment_description`,
 						`a`.`status`, `a`.`appointment_date`, `a`.`appointment_time`, 
-						`a`.`visit_duration`, `a`.`patient_id`, 
+						`a`.`visit_duration`, `a`.`patient_id`, `c`.`communication_preference`, 
 						`a`.`service_list`, `a`.`package_list`,
-						`a`.`alternate_name1`, `a`.`alternate_phone1`, `a`.`alternate_name2`, `alternate_phone2`,
-						`a`.`phone_SMS`, `a`.`alternate_SMS1`, `a`.`alternate_SMS2`, `a`.`patient_notes`,
+						`c`.`alternate_name1`, `c`.`alternate_phone1`, `c`.`alternate_name2`, `c`.`alternate_phone2`,
+						`c`.`phone_SMS`, `c`.`cellphone_SMS`, `c`.`alternate_SMS1`, `c`.`alternate_SMS2`, `a`.`patient_notes`,
 						`p`.`name`, `p`.`notes`, `p`.`id` AS `pet_id`,
-						`c`.`first_name`, `c`.`last_name`, `c`.`phone`, `c`.`email`
+						`c`.`first_name`, `c`.`last_name`, `c`.`phone`, `c`.`cellphone`, `c`.`email`
 					FROM `meda_appointments` AS `a`
 					LEFT JOIN `meda_pets` AS `p` ON `a`.`patient_id`=`p`.`id`
 					LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
