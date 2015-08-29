@@ -3867,3 +3867,21 @@ a.darkgreen, button.darkgreen {
 .home-pillars h2 { color:#764C29;}
 .main-features h2{ color:#764C29;}
 strong.rte-head-12-proxima { color:#764C29;}
+
+/* style for css table */
+.invoice-table td:nth-child(1) {
+	width: 20%;
+	font-weight: bold;
+}
+
+.invoice-table td:nth-child(2) {
+	width: 55%;
+}
+
+.invoice-table td:nth-child(3) {
+	width: 25%;
+}
+
+.invoice-table input:focus {
+	background-color: #e45000;
+}

@@ -375,6 +375,7 @@ var appointmentDetailsAction = {
         modalInvoiceSelector: null,
 
         // not include in init()
+        ajaxEditInvoice: 'ajax/invoice.ajax.php?action=edit',
         eventID: null
     },
     init: function(newSettings) {
@@ -383,6 +384,8 @@ var appointmentDetailsAction = {
     },
     setup: function() { 
         appointmentDetailsAction.config.modalViewSelector.on('click', 'a[data-role="view_invoice"]', appointmentDetailsAction.displayInvoice);
+        appointmentDetailsAction.config.modalInvoiceSelector.on('click', 'button[data-role="edit-invoice"]', appointmentDetailsAction.editInvoice_display);
+        appointmentDetailsAction.config.modalInvoiceSelector.on('focusout', 'input[data-role="editField"]', appointmentDetailsAction.editInvoice_handler);
     },
     displayInvoice: function(event) {
         $.ajax({
@@ -393,6 +396,32 @@ var appointmentDetailsAction = {
             success: function(data) {
                 appointmentDetailsAction.config.modalInvoiceSelector.find(".modal-body").html(data);
                 appointmentDetailsAction.config.modalInvoiceSelector.find(".modal").modal('show');
+            }
+        });
+    },
+    // enable input field in invoice table to edit data (only discount price atm)
+    editInvoice_display: function(event) {
+        event.preventDefault();
+        var tdObj = appointmentDetailsAction.config.modalInvoiceSelector.find(".invoice-table tr:nth-last-child(2) td:nth-child(2)");
+        var currentValue = tdObj.html().substr(1).trim();      // remove $ in the string
+        tdObj.html("$").append($("<input type='text' data-role='editField' name='discount' value='" + currentValue + "' />"));
+        appointmentDetailsAction.config.modalInvoiceSelector.find("input:nth-child(1)").trigger('focus');
+    },
+    editInvoice_handler: function(event) {
+        var inputObj = $(event.currentTarget);
+        var value = inputObj.val();
+        var key = inputObj.attr('name');
+        if (isNaN(value)) {
+            alert("Discount must be a string");
+            return false;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: appointmentDetailsAction.config.ajaxEditInvoice,
+            data: { 'key': key, 'value': value, 'app_id': appointmentDetailsAction.config.eventID },
+            complete: function() {
+                appointmentDetailsAction.config.modalViewSelector.find('a[data-role="view_invoice"]').trigger('click');
             }
         });
     }

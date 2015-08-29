@@ -42,21 +42,21 @@ switch ($option) {
                 $packages = explode(',', $r['package_list']);
 
                 // generate services data
-                $serviceString = '<b>Services: </b><br /><ul>';
+                $serviceString = '<b>Services: </b>';
                 foreach ($services as $sid) {
                     if ($sid == '') { break; }
                     $s = Services::getServiceById($sid);
-                    if ($s != null) { $serviceString .= "<li>" . $s -> getName() . "</li>"; }
+                    if ($s != null) { $serviceString .= $s -> getName() . ", "; }
                 }
-                $serviceString .= "</ul>";
+                $serviceString = substr($serviceString, 0, -2) . "<br />";     // remove ', '
 
-                $serviceString .= "<b>Packages: </b><br /><ul>";
+                $serviceString .= "<b>Packages: </b>";
                 foreach ($packages as $pid) {
                     if ($pid == '') { break; }
                     $pkg = Packages::getPackageById($pid);
-                    if ($pkg != null) { $serviceString .= "<li>" . $pkg -> getName() . "</li>"; }
+                    if ($pkg != null) { $serviceString .= $pkg -> getName() . ", "; }
                 }
-                $serviceString .= "</ul>";
+                $serviceString = substr($serviceString, 0, -2) . "<br />";     // remove ', '
 
                 array_push($output, array(
                         'id' => $r['id'],
@@ -95,58 +95,8 @@ switch ($option) {
         echo json_encode($output);
         break;
     case "getInvoice":
-        $appointment = Appointments::getAppointmentById($id);
-        $total = 0;
-
-        echo "<table width='100%' border='1'>
-                <tr>
-                    <td width='30%'><b>Customer name</b></td>
-                    <td colspan='2'>" . $appointment[0]['first_name'] . " " . $appointment[0]['last_name'] . "</td>
-                </tr>
-                <tr>
-                    <td><b>Date/time</b></td>
-                    <td colspan='2'>" . $appointment[0]['appointment_date'] . " " . $appointment[0]['appointment_time'] . "</td>
-                </tr>";
-        // echo service list and its price
-        $service_list = explode(',', $appointment[0]['service_list']);
-        echo "  <tr>
-                    <td colspan='3'><b>Services</b></td>
-                </tr>";
-        foreach ($service_list as $s) {
-            $aService = Services::getServiceById($s);
-            if ($aService == null) { break; }
-            $total += $aService -> getPrice();
-            echo "<tr>
-                    <td></td>
-                    <td>" . $aService -> getName() . "</td>
-                    <td>$" . $aService -> getPrice() . "</td>
-                  </tr>";
-        }
-
-        // echo package list and its price
-        $package_list = explode(',', $appointment[0]['package_list']);
-        echo "  <tr>
-                    <td colspan='3'><b>Packages</b></td>
-                </tr>";
-        foreach ($package_list as $p) {
-            $aPackage = Packages::getPackageById($p);
-            if ($aPackage == null) { break; }
-            $total += $aPackage -> getPrice();
-            echo "<tr>
-                    <td></td>
-                    <td>" . $aPackage -> getName() . "</td>
-                    <td>$" . $aPackage -> getPrice() . "</td>
-                  </tr>";
-        }
-
-        // echo price
-        echo "<tr>
-                <td colspan='2'><b>Total Price</b></td>
-                <td>$" . $total . "</td>
-              </tr>";
-
-        // end table
-        echo "</table>";
+        $invoice = Invoices::getInvoiceByAppointmentId($id);
+        echo $invoice;
         break;
 }
 ?>
