@@ -188,9 +188,8 @@ class Appointments extends MicroGrid {
         $arr_created_by = array('admin'=>_ADMIN, 'doctor'=>_DOCTOR, 'patient'=>_PATIENT);
 
         // prepare statuses array		
-		$arr_statuses_view = array('0'=>'<span style="color:#a3a300">'._RESERVED.'</span>',
-								   '1'=>'<span style="color:#00a300">'._VERIFIED.'</span>',
-							       '2'=>'<span style="color:#939393">'._CANCELED.'</span>');
+
+		$arr_statuses_view = $this -> getStatusView();
 
 		$arr_statuses_edit = array('0'=>'<span style="color:#a3a300">'._RESERVED.'</span>',
 								   '1'=>'<span style="color:#00a300">'._VERIFIED.'</span>',
@@ -1798,7 +1797,7 @@ class Appointments extends MicroGrid {
         	'first_visit'								=> isset($params['first_visit']) ? $params['first_visit'] : '',
         	'insurance_id'								=> isset($params['insid']) ? $params['insid'] : '',
         	'visit_reason_id'							=> isset($params['vrid']) ? $params['vrid'] : '',
-        	'status'									=> 0,
+        	'status'									=> 1,
         	'status_changed'							=> '0000-00-00 00:00:00',
         	'created_by'								=> '',
         	'created_by_id'								=> $objLogin -> GetLoggedID(),
@@ -1842,28 +1841,30 @@ class Appointments extends MicroGrid {
 			if($approval_required == 'by email') {
 				$msg = _APPT_CREATED_CONF_BY_EMAIL_MSG;
 				$copy_subject = '';
-				$email_template = 'new_appointment_confirm_by_email';					
-				$field['status'] = '0';
+				$email_template = 'new_appointment_confirm_by_email';
+				// $fields['status'] = '0';
+				$fields['status'] = '1';
 			} else if ($approval_required == 'by admin/doctor') {
 				$msg = _APPT_CREATED_CONF_BY_ADMIN_MSG;
 				$copy_subject = _PATIENT_REQUESTED_APPOINTMENT;
 				$email_template = 'new_appointment_confirm_by_admin_doctor';					
-				$field['status'] = '0';
+				// $fields['status'] = '0';
+				$fields['status'] = '1';
 			} else {
 				// automatic
 				$msg = _APPOINTMENT_SUCCESS_BOOKED;
 				$copy_subject = '';
 				$email_template = 'new_appointment_accepted';
-				$field['status'] = '1';
+				$fields['status'] = '1';
 			}
 
             $doctor_info = Doctors::GetDoctorInfoById($docid);
 			$visit_price = isset($doctor_info[0]['default_visit_price']) ? $doctor_info[0]['default_visit_price'] : '0';
 
-            $field['created_by'] = ($objLogin->GetLoggedType() == 'owner' || $objLogin->GetLoggedType() == 'admin') ? 'admin' : $objLogin->GetLoggedType();
-            if ($objLogin->GetLoggedType() == "doctor") { $field['created_by'] = "provider"; }
-            elseif ($objLogin -> GetLoggedType() == "patient") { $field['created_by'] = "customer"; }
-            elseif ($objLogin -> GetLoggedType() == "staff") { $field['created_by'] = "staff"; }
+            $fields['created_by'] = ($objLogin->GetLoggedType() == 'owner' || $objLogin->GetLoggedType() == 'admin') ? 'admin' : $objLogin->GetLoggedType();
+            if ($objLogin->GetLoggedType() == "doctor") { $fields['created_by'] = "provider"; }
+            elseif ($objLogin -> GetLoggedType() == "patient") { $fields['created_by'] = "customer"; }
+            elseif ($objLogin -> GetLoggedType() == "staff") { $fields['created_by'] = "staff"; }
 
             if($objLogin -> IsLoggedInAsPatient()) {
                 $patient_id_in_sql = $objLogin -> GetLoggedID();
@@ -2631,7 +2632,7 @@ class Appointments extends MicroGrid {
 
         $output = '';
 
-        $arr_statuses_view = array('0'=>'<span style="color:#a3a300">'._RESERVED.'</span>', '1'=>'<span style="color:#00a300">'._VERIFIED.'</span>', '2'=>'<span style="color:#939393">'._CANCELED.'</span>');
+        $arr_statuses_view = self::getStatusView();
 
         
 
@@ -2854,6 +2855,16 @@ class Appointments extends MicroGrid {
 
 	}
 
+	public static function getStatusView() {
+        return array(
+        	'0' => '<span style="color:#a3a300">' . _RESERVED . '</span>', 
+        	'1' => '<span style="color:#00a300">' . _VERIFIED . '</span>', 
+        	'2' => '<span style="color:#939393">' . _CANCELED . '</span>',
+        	'3' => '<span style="color:#FF8000">' . _CHECKIN . '</span>',
+        	'4' => '<span style="color:#00FF00">' . _PAID . '</span>',
+        	'5' => '<span style="color:#FF0000">' . _NOSHOW . '</span>'
+        	);
+	}
 	
 	public static function getAppointmentById($id) {
 		$sql = "SELECT `a`.`id`, `a`.`appointment_number`, `a`.`appointment_description`,

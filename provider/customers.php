@@ -1,6 +1,7 @@
 <?php
 // *** Make sure the file isn't accessed directly
 defined('APPHP_EXEC') or die('Restricted Access');
+
 ?>
 <style type="text/css">
 .fnameShow {

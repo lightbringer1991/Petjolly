@@ -26,6 +26,7 @@ function __autoload($class_name){
         'BanList',
         'Banners',
         'Email',
+        'SMS',
         'GalleryAlbums',
         'GalleryAlbumItems',
         'MicroGrid',
@@ -66,9 +67,17 @@ function __autoload($class_name){
 		require_once('modules/phpmailer/class.phpmailer.php');
     }else if(in_array($class_name, $core_classes)){
         require_once('classes/core/'.$class_name.'.class.php');	
-	}else{
+	} elseif (strpos($class_name, 'Twilio') !== FALSE) { 
+		// load class for Twilio
+		$folders = explode('_', $class_name);
+		$path = "custom_libraries/Twilio/";
+		foreach ($folders as $f) { $path .= "$f/"; }
+		$path = substr($path, 0, -1);		// remove '/'
+		$path .= ".php";
+		require_once($path);
+	} else {
 		require_once('classes/'.$class_name.'.class.php');	
-	}	
+	}
 }
 
 if(defined('APPHP_CONNECT') && APPHP_CONNECT == 'direct'){	
