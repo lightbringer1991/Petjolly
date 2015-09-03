@@ -264,7 +264,7 @@ switch ($option) {
         */
         $petList = array();
 
-        $sql = "SELECT `p`.`id`, `p`.`name`, CONCAT(`c`.`first_name`, ' ', `c`.`last_name`) AS `fullName`, `c`.`phone`, `c`.`email`
+        $sql = "SELECT `p`.`id`, `p`.`name`, CONCAT(`c`.`first_name`, ' ', `c`.`last_name`) AS `fullName`, `p`.`notes`, `c`.`phone`, `c`.`email`
                     FROM `meda_pets` AS `p`
                     LEFT JOIN `meda_patients` AS `c` ON `p`.`customer_id`=`c`.`id`
                     LEFT JOIN `providers_customers` AS `pc` ON `c`.`id`=`pc`.`customer_id`
@@ -284,6 +284,7 @@ switch ($option) {
                 'description' => $r['fullName'],
                 'phone' => $r['phone'],
                 'email' => $r['email'],
+                'notes' => $r['notes'],
                 'value' => $r['id'],
             );
             array_push($output, $record);
@@ -357,7 +358,7 @@ switch ($option) {
         $output = array(
             'name' => $result[0]['name'],
             'breed' => $result[0]['breed'],
-            'customerName' => $result[0]['first_name'] . ' ' . $result[0]['last_name']
+            'customerName' => $result[0]['first_name'] . ' ' . $result[0]['last_name'],
         );
         echo json_encode($output);
         break;

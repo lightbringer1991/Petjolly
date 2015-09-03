@@ -88,6 +88,7 @@ var createAppointmentAction = {
                     // manually update the textbox and hidden field
                     createAppointmentAction.config.formCreate.find("input[name='pet_name']").val(ui.item.label);
                     createAppointmentAction.config.formCreate.find("input[name='pet_id']").val(ui.item.value).trigger('change');
+                    createAppointmentAction.config.formCreate.find("textarea[name='pet_notes']").val(ui.item.notes);
                     createAppointmentAction.config.formCreate.find("input[name='customer_name']").val(ui.item.description);
                     createAppointmentAction.config.formCreate.find("input[name='customer_phone']").val(ui.item.phone);
                     createAppointmentAction.config.formCreate.find("input[name='customer_phone_preference'][value='phone']").click();
