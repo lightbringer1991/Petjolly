@@ -920,5 +920,4 @@ function convert_to_decimal($number)
 {
 	return (($number < 0) ? '-' : '').((abs($number) < 10) ? '0' : '').abs($number);
 }
-
 ?>

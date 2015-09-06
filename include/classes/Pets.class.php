@@ -90,6 +90,18 @@ class Pets {
 		}
 		return $allPets;
 	}
+
+	public static function getAllPetsByProviderId($id) {
+		$sql = "SELECT * FROM `meda_pets` AS `p`
+					LEFT JOIN `providers_customers` AS `pc` ON `p`.`customer_id`=`pc`.`customer_id`
+					WHERE `pc`.`provider_id`=$id";
+		$result = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
+		$allPets = array();
+		foreach ($result[0] as $r) {
+			array_push($allPets, new Pets($r['id'], $r['customer_id'], $r['name'], $r['type_id'], $r['breed']));
+		}
+		return $allPets;
+	}
 }
 
 ?>

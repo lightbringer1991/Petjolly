@@ -8,10 +8,6 @@ defined('APPHP_EXEC') or die('Restricted Access');
 	font-weight: bold;
 }
 
-thead th.c_table {
-
-}
-
 span.action_icon {
 	font-size: 20px;
 	padding: 0 10px 0 10px;

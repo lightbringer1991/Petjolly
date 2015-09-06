@@ -73,7 +73,12 @@
                         <i class="fa fa-user"></i> <span>CUSTOMERS</span>
                     </a>
                 </li>
-                <li class="treeview">
+                <li>
+                    <a href="index.php?provider=pets">
+                        <i class="fa fa-user"></i> <span>PETS</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?provider=home">
                         <i class="fa fa-dashboard"></i> <span>DASHBOARD</span></i>
                     </a>
