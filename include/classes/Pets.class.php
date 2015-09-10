@@ -21,55 +21,18 @@
  *	getBreed
  *	expose
  **/
-class Pets {
-	private $id;
-	private $customer_id;
-	private $name;
-	private $type_id;
-	private $breed;
+class Pets extends ModelBase {
 	
-	public function __construct($newId = -1, $newCustomer_id = -1, $newName = '', $newTypeID = '', $newBreed = '') {
-		//initiate an existing record
-		if (($newId != -1) and ($newCustomer_id == -1) and ($newName == '') and ($newTypeID == '') and ($newBreed == '')) {
-			$aPet = Pets::getPetById($newId);
-			$this -> id = $aPet -> getId();
-			$this -> customer_id = $aPet -> getCustomerId();
-			$this -> name = $aPet -> getName();
-			$this -> type_id = $aPet -> getTypeId();
-			$this -> breed = $aPet -> getBreed();
-		}
-		else {
-			$this -> id = $newId;
-			$this -> customer_id = $newCustomer_id;
-			$this -> name = $newName;
-			$this -> type_id = $newTypeID;
-			$this -> breed = $newBreed;
-		}
+	public function __construct($fields) {
+		parent::__construct($fields);
 	}
 	
+	public function getTableName() {
+		return 'meda_pets';
+	}
+
 	public function __destruct() {
 		// nothing to do
-	}
-	
-	public function getId() { return $this -> id; }
-	public function getCustomerId() { return $this -> customer_id; }
-	public function getName() { return $this -> name; }
-	public function getTypeId() { return $this -> type_id; }
-	public function getBreed() { return $this -> breed; }
-
-	public function add() {
-		if ($this -> id == -1) {
-			$sql = sprintf("INSERT INTO `meda_pets`(`customer_id`, `name`, `type_id`, `breed`) VALUES('%s', '%s', '%s', '%s')", $this -> customer_id, $this -> name, $this -> type_id, $this -> breed);
-			database_void_query($sql);
-
-			$sql = "SELECT `id` FROM `meda_pets` 
-						WHERE `name`='{$this -> name}' 
-						AND `customer_id`='{$this -> customer_id}'
-						AND `type_id`='{$this -> type_id}'
-						AND `breed`='{$this -> breed}'";
-			$r = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
-			$this -> id = $r[0]['id'];
-		}
 	}
 	
 	// return a list of class variables to be parsed to front end javascript via JSON
@@ -86,7 +49,7 @@ class Pets {
 		$allPets = array();
 		$result = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
 		foreach ($result[0] as $r) {
-			array_push($allPets, new Pets($r['id'], $r['customer_id'], $r['name'], $r['type_id'], $r['breed']));
+			array_push($allPets, new Pets($r));
 		}
 		return $allPets;
 	}
@@ -98,9 +61,19 @@ class Pets {
 		$result = database_query($sql, DATA_AND_ROWS, ALL_ROWS);
 		$allPets = array();
 		foreach ($result[0] as $r) {
-			array_push($allPets, new Pets($r['id'], $r['customer_id'], $r['name'], $r['type_id'], $r['breed']));
+			array_push($allPets, new Pets($r));
 		}
 		return $allPets;
+	}
+
+	public static function getPetById($id) {
+		$sql = "SELECT * FROM `meda_pets` WHERE `id`=$id";
+		$result = database_query($sql, DATA_AND_ROWS, FIRST_ROW_ONLY);
+		if ($result[1] == 0) {
+			return null;
+		} else {
+			return new Pets($result[0]);
+		}
 	}
 }
 

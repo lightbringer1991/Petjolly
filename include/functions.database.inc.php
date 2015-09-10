@@ -352,6 +352,9 @@ function database_insert_id(){
 
 }
 
+function clean_field($field) {
+	return mysql_real_escape_string($field);
+}
 
 
 ?>

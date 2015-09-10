@@ -186,7 +186,7 @@ switch ($option) {
 
         // update customer fields
         $petList = Pets::getAllPetsByCondition('id', $_POST['pet_id']);
-        Patients::updatePatientDetails($petList[0] -> getCustomerId(), array(
+        Patients::updatePatientDetails($petList[0] -> getField('customer_id'), array(
             'communication_preference'  => isset($_POST['communication_preference']) ? mysqli_real_escape_string($database_connection, $_POST['communication_preference']) : 'phone',
             'phone_SMS'                 => (isset($_POST['customer_phone_sms']) && ($_POST['customer_phone_sms'] == 'on')) ? 1 : 0,
             'cellphone_SMS'             => (isset($_POST['customer_cellphone_sms']) && ($_POST['customer_cellphone_sms'] == 'on')) ? 1 : 0,
@@ -230,7 +230,7 @@ switch ($option) {
     
         // update customer fields
         $petList = Pets::getAllPetsByCondition('id', $_POST['pet_id']);
-        Patients::updatePatientDetails($petList[0] -> getCustomerId(), array(
+        Patients::updatePatientDetails($petList[0] -> getField('customer_id'), array(
             'communication_preference'  => isset($_POST['communication_preference']) ? $_POST['communication_preference'] : 'phone',
             'phone_SMS'                 => (isset($_POST['customer_phone_sms']) && ($_POST['customer_phone_sms'] == 'on')) ? 1 : 0,
             'cellphone_SMS'             => (isset($_POST['customer_cellphone_sms']) && ($_POST['customer_cellphone_sms'] == 'on')) ? 1 : 0,
@@ -333,7 +333,12 @@ switch ($option) {
         } else {
             $newType = $petType[0];
         }
-        $newPet = new Pets(-1, $id, $petDetails['name'], $newType -> getId(), $petDetails['breed']);
+        $newPet = new Pets(array(
+                'customer_id' => $id,
+                'name' => $petDetails['name'],
+                'type_id' => $newType -> getId(),
+                'breed' => $petDetails['breed']
+            ));
         $newPet -> add();
 
         // generate returned data

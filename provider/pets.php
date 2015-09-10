@@ -6,10 +6,10 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 ?>
 
 <div class="row">
-	<div class="col-md-5 col-xs-12 col-lg-5">
+	<div class="col-md-5 col-xs-12 col-lg-5" data-role="container-petList">
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-lg-12">
-				<button class="btn btn-warning pull-right" style="margin-bottom: 7px;" type="button" data-role='btn-add-pet'>Add</button>
+				<button class="btn btn-warning pull-right" style="margin-bottom: 7px;" data-toggle="modal" data-target="#container_newPetForm">Add</button>
 			</div>
 		</div>
 		<table data-id="pet_table" class="table table-bordered display">
@@ -22,11 +22,11 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 			<tbody>
 <?php
 	foreach ($allPets as $p) {
-		$customer = Patients::getPatientDataById($p -> getCustomerId());
-		echo "	<tr>
+		$customer = Patients::getPatientDataById($p -> getField('customer_id'));
+		echo "	<tr data-id='" . $p -> getField('id') . "'>
 					<td>{$customer[0]['first_name']} {$customer[0]['last_name']}</td>
-					<td>" . $p -> getName() . "</td>
-					<td>" . $p -> getBreed() . "</td>
+					<td>" . $p -> getField('name') . "</td>
+					<td>" . $p -> getField('breed') . "</td>
 					<td><input type='checkbox' name='cb_pet' /></td>
 				</tr>";
 	}
@@ -35,7 +35,7 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 		</table>
 		<div class="row">
 			<div class="col-md-12 col-xs-12 col-lg-12">
-				<button class="btn btn-info" style="margin-bottom: 7px;" type="button" data-role='btn-add-pet'>Delete</button>
+				<button class="btn btn-info" style="margin-bottom: 7px;" type="button" data-role='btn-delete-pet'>Delete</button>
 			</div>
 		</div>
 	</div>
@@ -49,12 +49,10 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="pet_details">
+				<button class="btn btn-warning" style="margin-bottom: 7px;" type="button" data-role='btn-edit-pet'>Edit Details</button><br />
 				<form>
 					<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
 						<tbody>
-							<tr>
-								<td colspan='2'><button class="btn btn-warning" style="margin-bottom: 7px;" type="button" data-role='btn-edit-pet'>Edit Details</button></td>
-							</tr>
 							<tr>
 								<td width="25%" align="left">
 									<label for="pet_name">Name</label>
@@ -113,7 +111,7 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 							</tr>
 							<tr>
 								<td width="25%" align="left">
-									<button class="btn btn-info" style="margin-bottom: 7px;" type="button" data-role='btn-edit-pet'>Edit</button>
+									<button class="btn btn-info" style="margin-bottom: 7px;" type="button" data-role='btn-submit-details'>Edit</button>
 								</td>
 								<td></td>
 							</tr>
@@ -122,7 +120,7 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 				</form>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="pet_appointment_history">
-				Pet Appointments
+
 			</div>
 			<div role="tabpanel" class="tab-pane" id="pet_payment_history">
 				Payment history
@@ -134,20 +132,59 @@ if ($objLogin -> IsLoggedInAsDoctor()) {
 	</div>
 </div>
 
+<div class="modal fade" id="container_newPetForm" tabindex="-1" role="dialog" aria-labelledby="label_petForm">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="label_petForm">New Pet</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<input type='hidden' name='customer_id' value='' />
+					<table class="mgrid_table" width="100%" cellspacing="0" cellpadding="0" border="0">
+						<tr>
+							<td class='col-md-4 col-xs-6 col-lg-4'><label for="customer_name">Customer Name:</label></td>
+							<td class='col-md-8 col-xs-6 col-lg-8'><input type="text" name="customer_name" class="mgrid_text" dir="ltr" maxlength="70" style="width:100%;" /></td>
+						</tr>
+						<tr>
+							<td><label for="pet_name">Pet Name:</label></td>
+							<td><input type="text" name="pet_name" class="mgrid_text" dir="ltr" maxlength="70" style="width:100%;" /></td>
+						</tr>
+						<tr>
+							<td><label for="pet_type">Pet Type:</label></td>
+							<td>
+								<select name='pet_type' style='width:100%;'>
+									<option value='1'>cat</option>
+									<option value='2'>dog</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="pet_breed">Pet Breed:</label></td>
+							<td><input type="text" name="pet_breed" class="mgrid_text" dir="ltr" maxlength="70" style="width:100%;" /></td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-warning" data-role='btn-submitForm'>Add</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="js/provider_pets.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {
-	var table = $("[data-id='pet_table']").DataTable();
-
-	// perform display pet details
-    $("[data-id='pet_table'] tbody").on('click', 'tr', function () {
-        if ( $(this).hasClass('selected') ) {
-            $(this).removeClass('selected');
-        }
-        else {
-            table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    } );
+	petActions.init({
+		table_pets: $("[data-id='pet_table']"),
+		container_petForm: $("#container_newPetForm"),
+		container_petList: $("[data-role='container-petList']"),
+		container_petDetails: $("[data-role='container-petDetails']")
+	});
 
     // delete from table
 	$('#button').click( function () {

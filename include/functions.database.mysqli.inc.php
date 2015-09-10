@@ -166,4 +166,9 @@ function database_insert_id(){
 	return mysqli_insert_id($database_connection);
 }
 
+function clean_field($field) {
+	global $database_connection;
+	return mysqli_real_escape_string($database_connection, $string);
+}
+
 ?>

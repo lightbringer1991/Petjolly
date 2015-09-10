@@ -344,12 +344,12 @@ if($objLogin->IsLoggedInAsDoctor()){
 		echo "<tr><td colspan='2' style='text-align: center;'>No Pet registered with this customer</td></tr>";
 	} else {
 		foreach ($allPets as $p) {
-			$type = PetTypes::getPetTypesByCondition('id', $p -> getTypeId());
-			echo "<tr data-pet-id='" . $p -> getId() . "'>
-					<td>" . $p -> getName() . "</td>
+			$type = PetTypes::getPetTypesByCondition('id', $p -> getField('type_id'));
+			echo "<tr data-pet-id='" . $p -> getField('id') . "'>
+					<td>" . $p -> getField('name') . "</td>
 					<td>" . $type[0] -> getName() . "</td>
-					<td>" . $p -> getBreed() . "</td>
-					<td style='width:100px;'><button type='button' id='pet_del_btn' name=". $p -> getId() ." data-role='delete-customer' class='btn btn-danger'>Delete</button> </td>
+					<td>" . $p -> getField('breed') . "</td>
+					<td style='width:100px;'><button type='button' id='pet_del_btn' name=". $p -> getField('id') ." data-role='delete-customer' class='btn btn-danger'>Delete</button> </td>
 					
 				  </tr>";
 		}

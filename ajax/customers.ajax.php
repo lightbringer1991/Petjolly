@@ -41,14 +41,19 @@ switch ($option) {
 		$name = isset($_POST['pet_name']) ? mysqli_real_escape_string($database_connection, $_POST['pet_name']) : '';
 		$type = isset($_POST['type']) ? mysqli_real_escape_string($database_connection, $_POST['type']) : '';
         $breed = isset($_POST['pet_breed']) ? mysqli_real_escape_string($database_connection, $_POST['pet_breed']) : '';
-		$aPet = new Pets(-1, $id, $name, $type, $breed);
+		$aPet = new Pets(array(
+				'customer_id' => $id,
+				'name' => $name,
+				'type' => $type,
+				'breed' => $breed
+			));
 		$aPet -> add();
 		break;
 	case "getAllPetsByCustomer":
 		$allPets = Pets::getAllPetsByCondition('customer_id', $id);
 		$results = array();
 		foreach ($allPets as $p) {
-			$type = PetTypes::getPetTypesByCondition('id', $p -> getTypeId());
+			$type = PetTypes::getPetTypesByCondition('id', $p -> getField('type_id'));
 			$pet = array(
 				'id' => $p -> getId(),
 				'name' => $p -> getName(),
